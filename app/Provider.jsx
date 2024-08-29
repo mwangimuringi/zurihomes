@@ -1,13 +1,7 @@
-import React from 'react'
-import Header from './_components/Header'
+import React from "react";
 
-function Provider({children}) {
-  return (
-    <div>
-        <Header />
-      {children}
-    </div>
-  )
+function Provider({ children }) {
+  return <div>{children}</div>;
 }
 
-export default Provider
+export default Provider;
