@@ -1,0 +1,5 @@
+{
+    "css.lint.unknownAtRules": "ignore",
+    "git.enabled": true,
+    "git.branchRandomName.enable": true
+  }
