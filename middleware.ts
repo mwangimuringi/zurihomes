@@ -7,3 +7,4 @@ export default clerkMiddleware((auth, request) => {
     auth().protect()
   }
 })
+
