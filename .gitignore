@@ -7,7 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+<<<<<<< muringi
+=======
 # Dependency directories
+>>>>>>> main
 node_modules
 dist
 dist-ssr
@@ -23,6 +26,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< muringi
+=======
 
 # Ignore unrelated directories in parent folders
 /../713market/
@@ -61,4 +66,5 @@ dist-ssr
 /../urbanwheels/
 /../viatupoa/
 /../w212.jpg
+>>>>>>> main
 .env
