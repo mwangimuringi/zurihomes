@@ -1,0 +1,65 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignore unrelated directories in parent folders
+/../713market/
+/../Coffee cooperative/
+/../FashionablyWeb-main/
+/../Html5/
+/../KenyaWheels/
+/../React/
+/../Sinien-Koira-main/
+/../Tailwind demo/
+/../application-login-page-main/
+/../babacare/
+/../blognest/
+/../clerk-auth/
+/../commercehub/
+/../df/
+/../free-nextjs-admin-dashboard-main/
+/../full-stack-app-main/
+/../graftbase/
+/../graphql-server/
+/../graphql_server/
+/../haru-fashion-main/
+/../kahawayetu/
+/../mwangi-ebay/
+/../my_app/
+/../next-auth/
+/../nextauth/
+/../nextjs_starter/
+/../ngara_wifi/
+/../pic.jpg
+/../realtor_colombia/
+/../sample-01/
+/../slack/
+/../tamubites/
+/../ubuntu/
+/../urbanwheels/
+/../viatupoa/
+/../w212.jpg
+
+.env
