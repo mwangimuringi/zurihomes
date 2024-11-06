@@ -13,7 +13,6 @@ export default function SignUp() {
     e.preventDefault();
     const res = await fetch('/api/auth/signup', formData);
   };
-
   console.log('submitted');
   return (
     <div className="p-3 max-w-lg mx-auto">
