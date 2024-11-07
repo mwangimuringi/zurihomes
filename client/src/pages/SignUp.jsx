@@ -3,6 +3,8 @@ import Link from 'react-router-dom';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -11,7 +13,24 @@ export default function SignUp() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('/api/auth/signup', formData);
+    setLoading(true);
+    const res = await fetch('/api/auth/signup', 
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+    const data = await res.json();
+    if (data.success === false) {
+     setError(data.message);
+     setLoading(false);
+     return;
+    }
+    setLoading(false);
+    console.log(data);
   };
   console.log('submitted');
   return (
@@ -36,8 +55,8 @@ export default function SignUp() {
           className="border rounded-lg p-3"
           id="password"
         />
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-          Sign Up
+        <button disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+          {loading ? 'Loading...' : 'Sign Up'}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
