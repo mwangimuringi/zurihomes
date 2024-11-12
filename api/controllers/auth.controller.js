@@ -36,3 +36,23 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const google = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+    const newUser = await User.create({
+      email: req.body.email,
+      password: req.body.password,
+      username: req.body.username,
+    });
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+  }
+  else {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  } catch (error) {
+    next(error)
+  }
+}
