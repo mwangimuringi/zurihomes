@@ -4,6 +4,8 @@ import { useRef } from "react";
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
+  const [file, setFile] = useState(undefined);
+  console.log(file);
 
   // firebase storage
   // allow read;
