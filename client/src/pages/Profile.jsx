@@ -7,6 +7,7 @@ export default function Profile() {
   const { currentUser } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState(false);
   console.log(filePercentage);
   console.log(file);
 
@@ -26,20 +27,16 @@ export default function Profile() {
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePercentage(Math.round(progress));
-      },
-      (error) => {
-        console.error("Upload failed:", error);
-      },
-      () => {
-        console.log("Upload complete");
-      }
-    );
+    uploadTask.on("state_changed", (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      setFilePercentage(Math.round(progress));
+    });
+    (error) => {
+      setFileUploadError(true);
+    };
+    ()=>{
+      setFileUploadError(false);
+    }
   };
   return (
     <div className="p-3 max-w-lg mx-auto">
