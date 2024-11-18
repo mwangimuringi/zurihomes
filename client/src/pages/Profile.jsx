@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { useRef, useState, useEffect } from "react";
 import { getStorage } from "../firebase";
+import { get } from "mongoose";
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -35,7 +36,9 @@ export default function Profile() {
       setFileUploadError(true);
     };
     ()=>{
-      setFileUploadError(false);
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        
+      });
     }
   };
   return (
