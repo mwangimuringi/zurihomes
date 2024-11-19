@@ -1,7 +1,12 @@
 import { useSelector } from "react-redux";
 import { useRef, useState, useEffect } from "react";
-import { getStorage } from "../firebase";
-import { get } from "mongoose";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  getStorage,
+} from "firebase/storage";
+import { app } from "../firebase";
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -9,8 +14,10 @@ export default function Profile() {
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [formData, setFormData] = useState({});
+  console.log(formData);
   console.log(filePercentage);
-  console.log(file);
+  console.log(fileUploadError);
 
   // firebase storage
   // allow read;
@@ -35,11 +42,14 @@ export default function Profile() {
     (error) => {
       setFileUploadError(true);
     };
-    ()=>{
+    () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        
+        setFormData({
+          ...formData,
+          avatar: downloadURL,
+        });
       });
-    }
+    };
   };
   return (
     <div className="p-3 max-w-lg mx-auto">
