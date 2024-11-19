@@ -65,6 +65,18 @@ export default function Profile() {
           alt="profile"
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
         />
+        <p className="text-center text-slate-700 text-self-center">
+  {fileUploadError && (
+    <span className="text-red-700">Error uploading image</span>
+  )}
+  {!fileUploadError && filePercentage > 0 && filePercentage < 100 && (
+    <span className="text-slate-700">{`Uploading ${filePercentage}%`}</span>
+  )}
+  {!fileUploadError && filePercentage === 100 && (
+    <span className="text-green-700">Successfully uploaded!</span>
+  )}
+</p>
+
         <input
           type="text"
           placeholder="username"
