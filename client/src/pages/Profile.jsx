@@ -15,9 +15,6 @@ export default function Profile() {
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  console.log(formData);
-  console.log(filePercentage);
-  console.log(fileUploadError);
 
   // firebase storage
   // allow read;
