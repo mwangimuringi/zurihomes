@@ -61,13 +61,13 @@ export default function Profile() {
         />
         <img
           onClick={() => fileRef.current.click()}
-          src={currentUser.avatar}
+          src={formData.avatar || currentUser.avatar}
           alt="profile"
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
         />
         <p className="text-center text-slate-700 text-self-center">
   {fileUploadError && (
-    <span className="text-red-700">Error uploading image</span>
+    <span className="text-red-700">Error uploading image(image size must be less than 2MB)</span>
   )}
   {!fileUploadError && filePercentage > 0 && filePercentage < 100 && (
     <span className="text-slate-700">{`Uploading ${filePercentage}%`}</span>
