@@ -7,4 +7,3 @@ router.get('/test', test);
 router.post('/update/:id', updateUser);
 
 export default router;
-
