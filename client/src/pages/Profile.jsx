@@ -23,37 +23,36 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
 
-  // firebase storage
-  // allow read;
-  // allow write: if request.resource.size < 2 * 1024 * 1024 &&
-  // request.resource.contentType.matches('image/.*');
-
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
   }, [file]);
+
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
-    const fileName = new Date().getTime() + file.name;
+    const fileName = `${new Date().getTime()}_${file.name}`;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on("state_changed", (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      setFilePercentage(Math.round(progress));
-    });
-    (error) => {
-      setFileUploadError(true);
-    };
-    () => {
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        setFormData({
-          ...formData,
-          avatar: downloadURL,
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePercentage(Math.round(progress));
+      },
+      (error) => {
+        setFileUploadError(true);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({
+            ...formData,
+            avatar: downloadURL,
+          });
         });
-      });
-    };
+      }
+    );
   };
 
   const handleChange = (e) => {
@@ -66,10 +65,8 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(updateUserStart);
-      const res = await fetch`/api/user/update/${
-        currentUser.id
-      }`, {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,6 +74,13 @@ export default function Profile() {
         body: JSON.stringify(formData),
       });
 
+      if (res.ok) {
+        const data = await res.json();
+        dispatch(updateUserSuccess(data));
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Update failed");
+      }
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -102,7 +106,7 @@ export default function Profile() {
         <p className="text-center text-slate-700 text-self-center">
           {fileUploadError && (
             <span className="text-red-700">
-              Error uploading image(image size must be less than 2MB)
+              Error uploading image (image size must be less than 2MB)
             </span>
           )}
           {!fileUploadError && filePercentage > 0 && filePercentage < 100 && (
@@ -135,7 +139,10 @@ export default function Profile() {
           className="border p-3 rounded-lg"
           onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
+        <button
+          type="submit"
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+        >
           update
         </button>
       </form>
