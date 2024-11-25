@@ -7,6 +7,12 @@ import {
   getStorage,
 } from "firebase/storage";
 import { app } from "../firebase";
+import {
+  updateUserStart,
+  updateUserFailure,
+  updateUserSuccess,
+} from "../redux/User/userSlice";
+import { useDispatch } from "react-redux";
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -15,6 +21,7 @@ export default function Profile() {
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const dispatch = useDispatch();
 
   // firebase storage
   // allow read;
@@ -56,12 +63,22 @@ export default function Profile() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-     
+      dispatch(updateUserStart);
+      const res = await fetch`/api/user/update/${
+        currentUser.id
+      }`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
     } catch (error) {
-      
+      dispatch(updateUserFailure(error.message));
     }
   };
 
