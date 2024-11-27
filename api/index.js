@@ -28,6 +28,7 @@ app.listen(3000, () => {
 //connect routes
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/listing", listingRouter);
 
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
