@@ -3,7 +3,12 @@ import React, { useState } from "react";
 export default function CreateListing() {
   const [files, setFiles] = useState([]);
   const handleImageSubmit = (e) => {
-    
+    if (files.length > 0 && files.length < 7) {
+      const promises = [];
+      for (let i = 0; i < files.length; i++) {
+        promises.push(storeimage(files[i]));
+    }
+  }
   };
   return (
     <main className="p-3 max-w-4xl mx-auto">
