@@ -1,16 +1,28 @@
 import React, { useState } from "react";
-import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { app } from "../firebase";
 
 export default function CreateListing() {
   const [files, setFiles] = useState([]);
+  const [formData, setFormData] = useState({
+    imageUrls: [],
+  });
+  console.log(formData);
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length < 7) {
       const promises = [];
       for (let i = 0; i < files.length; i++) {
         promises.push(storeimage(files[i]));
+      }
+      Promise.all(promises).then((urls) => {
+        setFormData({ ...formData, imageUrls: formData.imageUrls.concat(urls) });
+      });
     }
-  }
   };
   const storeimage = async (file) => {
     return new Promise((resolve, reject) => {
@@ -20,9 +32,17 @@ export default function CreateListing() {
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
         "state_changed",
-      )
-    })
-  }
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
 
   return (
     <main className="p-3 max-w-4xl mx-auto">
