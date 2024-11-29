@@ -12,16 +12,22 @@ export default function CreateListing() {
   const [formData, setFormData] = useState({
     imageUrls: [],
   });
+  const [imageUploadError, setImageUploadError] = useState(false);
   console.log(formData);
   const handleImageSubmit = (e) => {
-    if (files.length > 0 && files.length < 7) {
+    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       const promises = [];
       for (let i = 0; i < files.length; i++) {
         promises.push(storeimage(files[i]));
       }
       Promise.all(promises).then((urls) => {
         setFormData({ ...formData, imageUrls: formData.imageUrls.concat(urls) });
+        setImageUploadError(false);
+      }). catch ((error) => {
+        setImageUploadError('Error uploading image (2 mb max per image)');
       });
+    } else {
+      setImageUploadError('You can only upload 6 images per listing');
     }
   };
   const storeimage = async (file) => {
@@ -177,10 +183,17 @@ export default function CreateListing() {
               Upload
             </button>
           </div>
+          <p className="text-red-700 text-sm">{imageUploadError && imageUploadError}</p>
+          {
+            formData.imageUrls.length > 0 && formData.imageUrls.map((url) => {
+              <img src={url} alt="listing image" className="w-40 h-40 object-cover rounded-lg" />
+            })
+          }
           <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
             Create Listing
           </button>
         </div>
+        <p>{imageUploadError && imageUploadError}</p>
       </form>
     </main>
   );
