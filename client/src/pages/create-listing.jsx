@@ -11,10 +11,10 @@ export default function CreateListing() {
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
-    name: '',
-    description: '',
-    address: '',
-    type: 'rent',
+    name: "",
+    description: "",
+    address: "",
+    type: "rent",
     bedrooms: 1,
     bathrooms: 1,
     regular_price: 0,
@@ -31,14 +31,19 @@ export default function CreateListing() {
       for (let i = 0; i < files.length; i++) {
         promises.push(storeimage(files[i]));
       }
-      Promise.all(promises).then((urls) => {
-        setFormData({ ...formData, imageUrls: formData.imageUrls.concat(urls) });
-        setImageUploadError(false);
-      }). catch ((error) => {
-        setImageUploadError('Error uploading image (2 mb max per image)');
-      });
+      Promise.all(promises)
+        .then((urls) => {
+          setFormData({
+            ...formData,
+            imageUrls: formData.imageUrls.concat(urls),
+          });
+          setImageUploadError(false);
+        })
+        .catch((error) => {
+          setImageUploadError("Error uploading image (2 mb max per image)");
+        });
     } else {
-      setImageUploadError('You can only upload 6 images per listing');
+      setImageUploadError("You can only upload 6 images per listing");
     }
   };
   const storeimage = async (file) => {
@@ -50,7 +55,8 @@ export default function CreateListing() {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
         },
         (error) => {
@@ -64,6 +70,7 @@ export default function CreateListing() {
       );
     });
   };
+  const handleChange = (e) => {};
 
   return (
     <main className="p-3 max-w-4xl mx-auto">
@@ -80,6 +87,8 @@ export default function CreateListing() {
             maxLength="62"
             minLength="10"
             required
+            onChange={handleChange}
+            value={formData.name}
           />
           <textarea
             type="text"
@@ -87,6 +96,8 @@ export default function CreateListing() {
             className="border p-3 rounded-lg"
             id="description"
             required
+            onChange={handleChange}
+            value={formData.description}
           />
           <input
             type="text"
@@ -94,26 +105,58 @@ export default function CreateListing() {
             className="border p-3 rounded-lg"
             id="address"
             required
+            onChange={handleChange}
+            value={formData.address}
           />
           <div className="flex gap-6 flex-wrap">
             <div className="flex gap-2">
-              <input type="checkbox" className="w-5" id="sale" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="sale"
+                onChange={handleChange}
+                checked={formData.type === "sale"}
+              />
               <span>Sell</span>
             </div>
             <div className="flex gap-2">
-              <input type="checkbox" className="w-5" id="rent" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="rent"
+                onChange={handleChange}
+                checked={formData.type === "rent"}
+              />
               <span>Rent</span>
             </div>
             <div className="flex gap-2">
-              <input type="checkbox" className="w-5" id="parking" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="parking"
+                onChange={handleChange}
+                checked={formData.parking}
+              />
               <span>Parking spot</span>
             </div>
             <div className="flex gap-2">
-              <input type="checkbox" className="w-5" id="furnished" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="furnished"
+                onChange={handleChange}
+                checked={formData.furnished}
+              />
               <span>Furnished</span>
             </div>
             <div className="flex gap-2">
-              <input type="checkbox" className="w-5" id="offer" />
+              <input
+                type="checkbox"
+                className="w-5"
+                id="offer"
+                onChange={handleChange}
+                checked={formData.offer}
+              />
               <span>Offer</span>
             </div>
           </div>
@@ -126,6 +169,8 @@ export default function CreateListing() {
                 max="10"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
+                onChange={handleChange}
+                value={formData.bedrooms}
               />
               <p>Beds</p>
             </div>
@@ -137,6 +182,8 @@ export default function CreateListing() {
                 max="10"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
+                onChange={handleChange}
+                value={formData.bathrooms}
               />
               <p>Baths</p>
             </div>
@@ -144,10 +191,12 @@ export default function CreateListing() {
               <input
                 type="number"
                 id="regular_price"
-                min="1"
-                max="10"
+                min="Ksh 1000"
+                max="Ksh 1000,000"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
+                onChange={handleChange}
+                value={formData.regular_price}
               />
               <div className="flex flex-col items-center">
                 <p>Regular price</p>
@@ -158,10 +207,12 @@ export default function CreateListing() {
               <input
                 type="number"
                 id="discounted_price"
-                min="1"
-                max="10"
+                min="Ksh 1000"
+                max="Ksh 1000,000"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
+                onChange={handleChange}
+                value={formData.discounted_price}
               />
               <div className="flex flex-col items-center">
                 <p>Discounted price</p>
@@ -194,18 +245,23 @@ export default function CreateListing() {
               Upload
             </button>
           </div>
-          <p className="text-red-700 text-sm">{imageUploadError && imageUploadError}</p>
-          {
-            formData.imageUrls.length > 0 && formData.imageUrls.map((url) => {
-              <img src={url} alt="listing image" className="w-40 h-40 object-cover rounded-lg" />
-            })
-          }
+          <p className="text-red-700 text-sm">
+            {imageUploadError && imageUploadError}
+          </p>
+          {formData.imageUrls.length > 0 &&
+            formData.imageUrls.map((url) => {
+              <img
+                src={url}
+                alt="listing image"
+                className="w-40 h-40 object-cover rounded-lg"
+              />;
+            })}
           <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
             Create Listing
           </button>
         </div>
         <p>{imageUploadError && imageUploadError}</p>
-      </form>                                                                               
+      </form>
     </main>
   );
 }
