@@ -9,7 +9,6 @@ import { app } from "../firebase";
 
 export default function CreateListing() {
   const [files, setFiles] = useState([]);
-  console.log(files);
   const [formData, setFormData] = useState({
     imageUrls: [],
   });
