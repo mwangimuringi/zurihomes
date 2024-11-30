@@ -194,7 +194,7 @@ export default function CreateListing() {
           </button>
         </div>
         <p>{imageUploadError && imageUploadError}</p>
-      </form>
+      </form>                                                                               
     </main>
   );
 }
