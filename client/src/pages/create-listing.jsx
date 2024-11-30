@@ -70,7 +70,26 @@ export default function CreateListing() {
       );
     });
   };
-  const handleChange = (e) => {};
+  const handleChange = (e) => {
+    if(e.target.id === 'sale' || e.target.id === 'rent') {
+      setFormData({
+        ...formData,
+        type: e.target.id
+      })
+    }
+    if(e.target.id === 'parking' || e.target.id === 'furnished' || e.target.id === 'offer') {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.checked
+      })
+    }
+    if(e.target.id === 'number' || e.target.id === 'text' || e.target.id === 'textarea') {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value
+      })
+    }
+  };
 
   return (
     <main className="p-3 max-w-4xl mx-auto">
