@@ -19,8 +19,8 @@ export default function CreateListing() {
     type: "rent",
     bedrooms: 1,
     bathrooms: 1,
-    regular_price: 0,
-    discounted_price: 0,
+    regular_price: 500,
+    discounted_price: 100,
     offer: false,
     parking: false,
     furnished: false,
@@ -261,7 +261,7 @@ export default function CreateListing() {
               <input
                 type="number"
                 id="discounted_price"
-                min="Ksh 1000"
+                min="Ksh 100"
                 max="Ksh 1000,000"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
