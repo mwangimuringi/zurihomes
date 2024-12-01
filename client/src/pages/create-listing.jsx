@@ -98,6 +98,10 @@ export default function CreateListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      //conditional validation
+      if(formData.imageUrls.length < 1) return setError('You must upload atleast 1 image');
+      //convert to Number
+      if(+formData.regular_price < +formData.discounted_price) return setError('Discounted price must be less than regular price');
       setLoading(true);
       setError(false);
       const res = await fetch('/api/listing/create', {
@@ -252,6 +256,7 @@ export default function CreateListing() {
                 <span className="text-sm"> (Ksh / month)</span>
               </div>
             </div>
+            {formData.offer && (
             <div className="flex items-center gap-2">
               <input
                 type="number"
@@ -268,6 +273,7 @@ export default function CreateListing() {
                 <span className="text-sm"> (Ksh / month)</span>
               </div>
             </div>
+            )}
           </div>
         </div>
         <div className="flex flex-col flex-1 gap-4">
