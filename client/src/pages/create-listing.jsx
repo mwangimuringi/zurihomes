@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   getDownloadURL,
   getStorage,
@@ -6,9 +6,10 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import { set } from "mongoose";
+import {useSelector} from "react-redux";
 
 export default function CreateListing() {
+  const currentUser = useSelector((state) => state.user);
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
@@ -104,7 +105,10 @@ export default function CreateListing() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          useRef: currentUser._id
+        }),
       })
       const data = await res.json();
       setLoading(false);
