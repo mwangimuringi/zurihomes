@@ -27,6 +27,7 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingsError, setShowListingsError] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -129,6 +130,13 @@ export default function Profile() {
       dispatch(signoutUserFailure(data.message));
     }
   }
+  const handleShowListings = async() => {
+    try {
+      navigate("/listings");
+    } catch (error) {
+      setShowListingError(true);
+    }
+  }
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -198,6 +206,8 @@ export default function Profile() {
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
       <p className="text-green-700 mt-5">{updateSuccess ? "Profile updated successfully" : ""}</p>
+      <button onClick={handleShowListings} className="text-green-700 w-full">Show Listings</button>
+      <p className="text-red-700 mt-5">{showListingsError? "Error loading listings" : ""}</p>
     </div>
   );
 }
