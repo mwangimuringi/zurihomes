@@ -132,9 +132,14 @@ export default function Profile() {
   }
   const handleShowListings = async() => {
     try {
-      navigate("/listings");
+     const res = await fetch(`/api/user/listings/${currentUser.id}`);
+     const data = await res.json();
+     if (data.success === false) {
+       setShowListingsError(true);
+       return;
+     }
     } catch (error) {
-      setShowListingError(true);
+      setShowListingsError(true);
     }
   }
 
