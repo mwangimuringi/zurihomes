@@ -27,6 +27,7 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [userListings, setUserListings] = useState([]);
   const [showListingsError, setShowListingsError] = useState(false);
   const dispatch = useDispatch();
 
@@ -139,6 +140,7 @@ export default function Profile() {
        setShowListingsError(true);
        return;
      }
+     setUserListings(data);
     } catch (error) {
       setShowListingsError(true);
     }
