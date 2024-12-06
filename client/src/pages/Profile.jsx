@@ -268,7 +268,7 @@ export default function Profile() {
                 />
               </Link>
               <Link
-                to={`/listing/${listing._id}`}
+                to={`/delete-listing/${listing._id}`}
                 className="text-slate-700 font-semibold hover:underline truncate flex-1 "
               >
                 <p>{listing.name}</p>
@@ -280,7 +280,9 @@ export default function Profile() {
                 >
                   Delete
                 </button>
+                <Link to = {`/update-listing/${listing._id}`}>
                 <button className="text-green-700 uppercase">Edit</button>
+                </Link>
               </div>
             </div>
           ))}
