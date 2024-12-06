@@ -28,12 +28,21 @@ export const updateListing = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing) {
     return next(
+      errorHandler(404, "Listing not found, cannot update this listing")
+    );
+  }
+  if (req.user.id !== listing.useRef) {
+    return next(
       errorHandler(401, "You are not authorized to update this listing")
     );
   }
   try {
-    await listing.findByIdAndUpdate(req.params.id, req.body);
-    res.status(200).json({ message: "Listing updated successfully" });
+    const updatedListing = await Listing.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+    );
+    res.status(200).json(updatedListing);
   } catch (error) {
     next(error);
   }
