@@ -8,12 +8,19 @@ export default function Listing() {
     const params = useParams()
     useEffect(() => {
         const fetchListings = async () => {
-            const response = await fetch(`/api/listings/get/${params.listingId}`)
-            const data = await response.json()
-            if (data.success === false) {
-                return;
+            try {
+                setLoading(true)
+                const response = await fetch(`/api/listings/get/${params.listingId}`)
+                const data = await response.json()
+                if (data.success === false) {
+                    setError(true)
+                    setLoading(false)
+                    return;
+                }
+                setListing(data)
+            } catch (error) {
+                setError(true);
             }
-            setListing(data)
         }
         fetchListings()
     }, [])
