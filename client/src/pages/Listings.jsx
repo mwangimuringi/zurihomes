@@ -11,6 +11,7 @@ export default function Listing() {
             if (data.success === false) {
                 return;
             }
+            setListing(data)
         }
         fetchListings()
     }, [])
