@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 export default function Listing() {
@@ -25,8 +25,8 @@ export default function Listing() {
         fetchListings()
     }, [])
   return (
-    <div>
-      
-    </div>
+    <main>
+        {listing && listing.name}
+    </main>
   )
 }
