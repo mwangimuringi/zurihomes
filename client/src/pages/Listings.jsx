@@ -6,6 +6,7 @@ import {Navigation} from "swiper/modules";
 import "swiper/css/bundle";
 
 export default function Listing() {
+    SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
