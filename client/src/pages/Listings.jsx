@@ -19,6 +19,7 @@ export default function Listing() {
         }
         setListing(data);
         setLoading(false);
+        setError(false);
       } catch (error) {
         setError(true);
         setLoading(false);
@@ -31,6 +32,20 @@ export default function Listing() {
   return (
     <main>
       {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
+      {error && <p className="text-center my-7 text-2xl">Something went wrong!</p>}
+      {listing && (
+        <div className="flex flex-col gap-4">
+          <img
+            src={listing.imageUrls[0]}
+            alt="listing image"
+            className="h-48 w-full object-contain"
+          />
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-semibold">{listing.name}</h1>
+            <p className="text-slate-700">{listing.description}</p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
