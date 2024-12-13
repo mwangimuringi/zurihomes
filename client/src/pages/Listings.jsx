@@ -85,4 +85,43 @@ export default function Listing() {
     //   </div>
   );
   );
+  }     
+
+  export default Listing;
+
+
+{/* <div className="container">
+  <div className="row">
+    <div className="col-md-12">
+      <div className="card">
+        <div className="card-body">
+          <h5 className="card-title">Listings</h5>
+          <p className="card-text">
+            <a href="/listings/1">
+              <img
+                src="https://via.placeholder.com/150"
+                className="card-img-top"
+                alt="Listing 1"
+              />
+            </a>
+            <a href="/listings/2">
+              <img
+                src="https://via.placeholder.com/150"
+                className="card-img-top"
+                alt="Listing 2"                                     
+              />
+            </a>
+            <a href="/listings/3">
+              <img
+                src="https://via.placeholder.com/150"
+                className="card-img-top"
+                alt="Listing 3"
+              />
+            </a>
+          </p>                  
+        </div>
+      </div>
+    </div>      
+  </div>
+</div> */}    
 }
