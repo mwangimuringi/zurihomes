@@ -41,6 +41,13 @@ export default function Listing() {
         <p className="text-center my-7 text-2xl">Something went wrong!</p>
       )}
       {listing && !loading && !error && <h1>{listing.name}</h1>}
+      <Swiper
+        modules={[Navigation]}
+        slidesPerView={1}
+        spaceBetween={30}
+        navigation
+        pagination={{ clickable: true }}
+      ></Swiper>
     </main>
   );
 }
