@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
-import {Navigation} from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
 
 export default function Listing() {
-    SwiperCore.use([Navigation]);
+  SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -40,27 +40,23 @@ export default function Listing() {
       {error && (
         <p className="text-center my-7 text-2xl">Something went wrong!</p>
       )}
-      {listing && !loading && !error &&
-      (
+      {listing && !loading && !error && (
         <>
-        <Swiper navigation={true} modules={[Navigation]} spaceBetween={50} slidesPerView={1} loop={true} autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}>
-          <SwiperSlide>
-            <img src={listing.listing.images[0]} className="h-full w-full object-cover" alt="" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src={listing.listing.images[1]} className="h-full w-full object-cover" alt="" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src={listing.listing.images[2]} className="h-full w-full object-cover" alt="" />
-          </SwiperSlide>
-        </Swiper>
+          <Swiper navigation>
+            {listing.imageUrls.map((url) => (
+              <SwiperSlide key={url}>
+                <div
+                  className="h-[500px]"
+                  style={{
+                    background: `url(${url}) cover no-repeat`,
+                    backgroundSize: "cover",
+                  }}
+                ></div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </>
-      )
-      }
+      )}
     </main>
-    
   );
-  }    
+}
