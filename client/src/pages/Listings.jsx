@@ -43,7 +43,20 @@ export default function Listing() {
       {listing && !loading && !error &&
       (
         <>
-        
+        <Swiper navigation={true} modules={[Navigation]} spaceBetween={50} slidesPerView={1} loop={true} autoplay={{
+          delay: 2500,
+          disableOnInteraction: false,
+        }}>
+          <SwiperSlide>
+            <img src={listing.listing.images[0]} className="h-full w-full object-cover" alt="" />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img src={listing.listing.images[1]} className="h-full w-full object-cover" alt="" />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img src={listing.listing.images[2]} className="h-full w-full object-cover" alt="" />
+          </SwiperSlide>
+        </Swiper>
         </>
       )
       }
