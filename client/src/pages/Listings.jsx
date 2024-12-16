@@ -23,6 +23,7 @@ export default function Listing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [contact, setContact] = useState(false); 
   const params = useParams();
   const {currentUser} = useSelector((state) => state.user);
   useEffect(() => {
@@ -46,7 +47,6 @@ export default function Listing() {
     };
     fetchListings();
   }, [params.listingId]);
-  console.log(loading);
 
   return (
     <main>
