@@ -6,8 +6,8 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import {useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateListing() {
   const currentUser = useSelector((state) => state.user);
@@ -78,50 +78,60 @@ export default function CreateListing() {
     });
   };
   const handleChange = (e) => {
-    if(e.target.id === 'sale' || e.target.id === 'rent') {
+    if (e.target.id === "sale" || e.target.id === "rent") {
       setFormData({
         ...formData,
-        type: e.target.id
-      })
+        type: e.target.id,
+      });
     }
-    if(e.target.id === 'parking' || e.target.id === 'furnished' || e.target.id === 'offer') {
+    if (
+      e.target.id === "parking" ||
+      e.target.id === "furnished" ||
+      e.target.id === "offer"
+    ) {
       setFormData({
         ...formData,
-        [e.target.id]: e.target.checked
-      })
+        [e.target.id]: e.target.checked,
+      });
     }
-    if(e.target.id === 'number' || e.target.id === 'text' || e.target.id === 'textarea') {
+    if (
+      e.target.id === "number" ||
+      e.target.id === "text" ||
+      e.target.id === "textarea"
+    ) {
       setFormData({
         ...formData,
-        [e.target.id]: e.target.value
-      })
+        [e.target.id]: e.target.value,
+      });
     }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       //conditional validation
-      if(formData.imageUrls.length < 1) return setError('You must upload atleast 1 image');
+      if (formData.imageUrls.length < 1)
+        return setError("You must upload atleast 1 image");
       //convert to Number
-      if(+formData.regular_price < +formData.discounted_price) return setError('Discounted price must be less than regular price');
+      if (+formData.regular_price < +formData.discounted_price)
+        return setError("Discounted price must be less than regular price");
       setLoading(true);
       setError(false);
-      const res = await fetch('/api/listing/create', {
-        method: 'POST',
+      const res = await fetch("/api/listing/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
-          useRef: currentUser._id
+          useRef: currentUser._id,
         }),
-      })
+      });
       const data = await res.json();
       setLoading(false);
-      if (data.success === false){
+      if (data.success === false) {
         setError(data.message);
-      } 
-      navigate(`/listing/${data._id}`)
+      }
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -256,26 +266,30 @@ export default function CreateListing() {
               />
               <div className="flex flex-col items-center">
                 <p>Regular price</p>
-                <span className="text-sm"> (Ksh / month)</span>
+                {formData.type === "rent" && (
+                  <span className="text-xs"> (Ksh / month)</span>
+                )}
               </div>
             </div>
             {formData.offer && (
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                id="discounted_price"
-                min="Ksh 100"
-                max="Ksh 1000,000"
-                required
-                className="border p-3 border-gray-300 rounded-lg"
-                onChange={handleChange}
-                value={formData.discounted_price}
-              />
-              <div className="flex flex-col items-center">
-                <p>Discounted price</p>
-                <span className="text-sm"> (Ksh / month)</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  id="discounted_price"
+                  min="Ksh 100"
+                  max="Ksh 1000,000"
+                  required
+                  className="border p-3 border-gray-300 rounded-lg"
+                  onChange={handleChange}
+                  value={formData.discounted_price}
+                />
+                <div className="flex flex-col items-center">
+                  <p>Discounted price</p>
+                  {formData.type === "rent" && (
+                    <span className="text-xs"> (Ksh / month)</span>
+                  )}
+                </div>
               </div>
-            </div>
             )}
           </div>
         </div>
@@ -314,8 +328,11 @@ export default function CreateListing() {
                 className="w-40 h-40 object-cover rounded-lg"
               />;
             })}
-          <button disabled={loading || uploading} className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-            {loading ? 'Creating...' : 'Create Listing'}
+          <button
+            disabled={loading || uploading}
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+          >
+            {loading ? "Creating..." : "Create Listing"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}
         </div>
