@@ -88,8 +88,10 @@ export const getListings = async (req, res, next) => {
       type = { $in: ['sale', 'rent'] };
     }
 
+    const searchTerm = req.query.searchTerm || '';
+
     const listings = await Listing.find({
-      name: { $regex: searchTerm, $options: "i" },
+      name: { $regex: searchTerm, $options: "i" }, // Enables case-insensitive search for the 'name' field.
       offer,
       furnished,
       parking,
