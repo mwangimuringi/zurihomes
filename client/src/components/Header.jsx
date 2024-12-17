@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function Header() {
-  const user = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
+  const [searchTerm, setSearchTerm] = useState('');
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
