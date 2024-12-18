@@ -24,6 +24,15 @@ export default function Search() {
       sort: urlParams.get("sort") || "created_at",
       order: urlParams.get("order") || "desc",
     });
+    const fetchListings = async () => {
+      setLoading(true);
+      const searchQuery = new URLSearchParams(location.search).toString();
+      const res = await fetch(`/api/listings?${searchQuery}`);
+      const data = await res.json();
+      setListings(data);
+      setLoading(false);
+    };
+    fetchListings();
   }, [location.search]);
   
   return (
