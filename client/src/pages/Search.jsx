@@ -55,6 +55,9 @@ export default function Search() {
                 <option>Oldest</option>
             </select>
           </div>
+          <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95'>
+            Search
+          </button>
         </form>
       </div>
       <div className="">
