@@ -1,6 +1,10 @@
+
 import React from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Search() {
+  const navigate = useNavigate();
   const [sidebardata, setSidebarData] = useState({
     searchTerm: "",
     type: "all",
@@ -10,23 +14,44 @@ export default function Search() {
     sort: "created_at",
     order: "desc",
   });
+
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
-  
+  console.log(listings);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    setSidebarData({
-      searchTerm: urlParams.get("searchTerm") || "",
-      type: urlParams.get("type") || "all",
-      parking: urlParams.get("parking") === "true",
-      furnished: urlParams.get("furnished") === "true",
-      offer: urlParams.get("offer") === "true",
-      sort: urlParams.get("sort") || "created_at",
-      order: urlParams.get("order") || "desc",
-    });
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    const typeFromUrl = urlParams.get("type");
+    const parkingFromUrl = urlParams.get("parking");
+    const furnishedFromUrl = urlParams.get("furnished");
+    const offerFromUrl = urlParams.get("offer");
+    const sortFromUrl = urlParams.get("sort");
+    const orderFromUrl = urlParams.get("order");
+
+    if (
+      searchTermFromUrl ||
+      typeFromUrl ||
+      parkingFromUrl ||
+      furnishedFromUrl ||
+      offerFromUrl ||
+      sortFromUrl ||
+      orderFromUrl
+    ) {
+      setSidebarData({
+        searchTerm: searchTermFromUrl || "",
+        type: typeFromUrl || "all",
+        parking: parkingFromUrl === "true" ? true : false,
+        furnished: furnishedFromUrl === "true" ? true : false,
+        offer: offerFromUrl === "true" ? true : false,
+        sort: sortFromUrl || "created_at",
+        order: orderFromUrl || "desc",
+      });
+    }
+
     const fetchListings = async () => {
       setLoading(true);
-      const searchQuery = new URLSearchParams(location.search).toString();
+      const searchQuery = urlParams.toString();
       const res = await fetch(`/api/listings?${searchQuery}`);
       const data = await res.json();
       setListings(data);
@@ -91,24 +116,16 @@ export default function Search() {
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
-  
+
   return (
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
-  <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-    {/* Search Term */}
-    <div className="flex items-center gap-2">
-      <label className="whitespace-nowrap font-semibold">Search Term:</label>
-      <input
-        type="text"
-        id="searchTerm"
-        placeholder="Search..."
-        className="border rounded-lg p-3 w-full"
-        value={sidebardata.searchTerm}
-        onChange={handleChange}
-      />
-    </div>
-    input
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+          <div className="flex items-center gap-2">
+            <label className="whitespace-nowrap font-semibold">
+              Search Term:
+            </label>
+            <input
               type="text"
               id="searchTerm"
               placeholder="Search..."
@@ -180,28 +197,28 @@ export default function Search() {
                 onChange={handleChange}
                 checked={sidebardata.furnished}
               />
-
-    {/* Type */}
-    <div className="flex gap-2 flex-wrap items-center">
-      <label className="font-semibold">Type:</label>
-      {/* Checkboxes */}
-    </div>
-
-    {/* Sort */}
-    <div className="flex items-center gap-2">
-      <label className="font-semibold">Sort By:</label>
-      <select onChange={handleChange} id="sort_order" defaultValue="created_at_desc">
-        {/* Options */}
-      </select>
-    </div>
-
-    {/* Submit */}
-    <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95">
-      Search
-    </button>
-  </form>
-</div>
-
+              <span className="text-sm">Furnished</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="font-semibold">Sort By:</label>
+            <select
+              onChange={handleChange}
+              defaultValue={"created_at_desc"}
+              id="sort_order"
+              className="border rounded-lg p-3"
+            >
+              <option value="regularPrice_desc">Price high to low</option>
+              <option value="regularPrice_asc">Price low to hight</option>
+              <option value="createdAt_desc">Latest</option>
+              <option value="createdAt_asc">Oldest</option>
+            </select>
+          </div>
+          <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95">
+            Search
+          </button>
+        </form>
+      </div>
       <div className="">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">
           Listing results:
