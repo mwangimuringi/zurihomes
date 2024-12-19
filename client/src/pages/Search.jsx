@@ -1,10 +1,10 @@
-
 import React from "react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Search() {
   const navigate = useNavigate();
+  const location = useLocation(); // Use useLocation to access location.search
   const [sidebardata, setSidebarData] = useState({
     searchTerm: "",
     type: "all",
@@ -20,45 +20,58 @@ export default function Search() {
   console.log(listings);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const searchTermFromUrl = urlParams.get("searchTerm");
-    const typeFromUrl = urlParams.get("type");
-    const parkingFromUrl = urlParams.get("parking");
-    const furnishedFromUrl = urlParams.get("furnished");
-    const offerFromUrl = urlParams.get("offer");
-    const sortFromUrl = urlParams.get("sort");
-    const orderFromUrl = urlParams.get("order");
-
-    if (
-      searchTermFromUrl ||
-      typeFromUrl ||
-      parkingFromUrl ||
-      furnishedFromUrl ||
-      offerFromUrl ||
-      sortFromUrl ||
-      orderFromUrl
-    ) {
-      setSidebarData({
-        searchTerm: searchTermFromUrl || "",
-        type: typeFromUrl || "all",
-        parking: parkingFromUrl === "true" ? true : false,
-        furnished: furnishedFromUrl === "true" ? true : false,
-        offer: offerFromUrl === "true" ? true : false,
-        sort: sortFromUrl || "created_at",
-        order: orderFromUrl || "desc",
-      });
-    }
-
     const fetchListings = async () => {
-      setLoading(true);
-      const searchQuery = urlParams.toString();
-      const res = await fetch(`/api/listings?${searchQuery}`);
-      const data = await res.json();
-      setListings(data);
-      setLoading(false);
+      try {
+        setLoading(true);
+
+        const urlParams = new URLSearchParams(location.search);
+        const searchTermFromUrl = urlParams.get("searchTerm");
+        const typeFromUrl = urlParams.get("type");
+        const parkingFromUrl = urlParams.get("parking");
+        const furnishedFromUrl = urlParams.get("furnished");
+        const offerFromUrl = urlParams.get("offer");
+        const sortFromUrl = urlParams.get("sort");
+        const orderFromUrl = urlParams.get("order");
+
+        if (
+          searchTermFromUrl ||
+          typeFromUrl ||
+          parkingFromUrl ||
+          furnishedFromUrl ||
+          offerFromUrl ||
+          sortFromUrl ||
+          orderFromUrl
+        ) {
+          setSidebarData({
+            searchTerm: searchTermFromUrl || "",
+            type: typeFromUrl || "all",
+            parking: parkingFromUrl === "true",
+            furnished: furnishedFromUrl === "true",
+            offer: offerFromUrl === "true",
+            sort: sortFromUrl || "created_at",
+            order: orderFromUrl || "desc",
+          });
+        }
+
+        const searchQuery = urlParams.toString();
+        const res = await fetch(`/api/listing/get?${searchQuery}`);
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch listings: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        setListings(data);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+        alert("Failed to fetch listings. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchListings();
-  }, [location.search]);
+  }, [location.search]); // location.search dependency
 
   const handleChange = (e) => {
     if (
@@ -86,19 +99,16 @@ export default function Search() {
     ) {
       setSidebarData({
         ...sidebardata,
-        [e.target.id]:
-          e.target.checked || e.target.checked === "true" ? true : false,
+        [e.target.id]: e.target.checked ? true : false,
       });
     }
 
     if (e.target.id === "sort_order") {
-      const sort = e.target.value.split("_")[0] || "created_at";
-
-      const order = e.target.value.split("_")[1] || "desc";
+      const [sort, order] = e.target.value.split("_");
       setSidebarData({
         ...sidebardata,
-        sort,
-        order,
+        sort: sort || "created_at",
+        order: order || "desc",
       });
     }
   };
@@ -209,7 +219,7 @@ export default function Search() {
               className="border rounded-lg p-3"
             >
               <option value="regularPrice_desc">Price high to low</option>
-              <option value="regularPrice_asc">Price low to hight</option>
+              <option value="regularPrice_asc">Price low to high</option>
               <option value="createdAt_desc">Latest</option>
               <option value="createdAt_asc">Oldest</option>
             </select>
