@@ -20,45 +20,51 @@ export default function Search() {
   console.log(listings);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search); // Use location.search here
-    const searchTermFromUrl = urlParams.get("searchTerm");
-    const typeFromUrl = urlParams.get("type");
-    const parkingFromUrl = urlParams.get("parking");
-    const furnishedFromUrl = urlParams.get("furnished");
-    const offerFromUrl = urlParams.get("offer");
-    const sortFromUrl = urlParams.get("sort");
-    const orderFromUrl = urlParams.get("order");
-
-    if (
-      searchTermFromUrl ||
-      typeFromUrl ||
-      parkingFromUrl ||
-      furnishedFromUrl ||
-      offerFromUrl ||
-      sortFromUrl ||
-      orderFromUrl
-    ) {
-      setSidebarData({
-        searchTerm: searchTermFromUrl || "",
-        type: typeFromUrl || "all",
-        parking: parkingFromUrl === "true" ? true : false,
-        furnished: furnishedFromUrl === "true" ? true : false,
-        offer: offerFromUrl === "true" ? true : false,
-        sort: sortFromUrl || "created_at",
-        order: orderFromUrl || "desc",
-      });
-    }
-
     const fetchListings = async () => {
-      setLoading(true);
-      const searchQuery = urlParams.toString();
       try {
+        setLoading(true);
+
+        const urlParams = new URLSearchParams(location.search);
+        const searchTermFromUrl = urlParams.get("searchTerm");
+        const typeFromUrl = urlParams.get("type");
+        const parkingFromUrl = urlParams.get("parking");
+        const furnishedFromUrl = urlParams.get("furnished");
+        const offerFromUrl = urlParams.get("offer");
+        const sortFromUrl = urlParams.get("sort");
+        const orderFromUrl = urlParams.get("order");
+
+        if (
+          searchTermFromUrl ||
+          typeFromUrl ||
+          parkingFromUrl ||
+          furnishedFromUrl ||
+          offerFromUrl ||
+          sortFromUrl ||
+          orderFromUrl
+        ) {
+          setSidebarData({
+            searchTerm: searchTermFromUrl || "",
+            type: typeFromUrl || "all",
+            parking: parkingFromUrl === "true",
+            furnished: furnishedFromUrl === "true",
+            offer: offerFromUrl === "true",
+            sort: sortFromUrl || "created_at",
+            order: orderFromUrl || "desc",
+          });
+        }
+
+        const searchQuery = urlParams.toString();
         const res = await fetch(`/api/listing/get?${searchQuery}`);
-        if (!res.ok) throw new Error("Failed to fetch listings");
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch listings: ${res.statusText}`);
+        }
+
         const data = await res.json();
         setListings(data);
       } catch (error) {
         console.error("Error fetching listings:", error);
+        alert("Failed to fetch listings. Please try again later.");
       } finally {
         setLoading(false);
       }
