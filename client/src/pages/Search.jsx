@@ -1,9 +1,10 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Search() {
   const navigate = useNavigate();
+  const location = useLocation(); // Use useLocation to access location.search
   const [sidebardata, setSidebarData] = useState({
     searchTerm: "",
     type: "all",
@@ -19,7 +20,7 @@ export default function Search() {
   console.log(listings);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
+    const urlParams = new URLSearchParams(location.search); // Use location.search here
     const searchTermFromUrl = urlParams.get("searchTerm");
     const typeFromUrl = urlParams.get("type");
     const parkingFromUrl = urlParams.get("parking");
@@ -51,14 +52,20 @@ export default function Search() {
     const fetchListings = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`/api/listing/get?${searchQuery}`);
-      const data = await res.json();
-      setListings(data);
-      setLoading(false);
+      try {
+        const res = await fetch(`/api/listing/get?${searchQuery}`);
+        if (!res.ok) throw new Error("Failed to fetch listings");
+        const data = await res.json();
+        setListings(data);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchListings();
-  }, [location.search]);
+  }, [location.search]); // location.search dependency
 
   const handleChange = (e) => {
     if (
@@ -86,19 +93,16 @@ export default function Search() {
     ) {
       setSidebarData({
         ...sidebardata,
-        [e.target.id]:
-          e.target.checked || e.target.checked === "true" ? true : false,
+        [e.target.id]: e.target.checked ? true : false,
       });
     }
 
     if (e.target.id === "sort_order") {
-      const sort = e.target.value.split("_")[0] || "created_at";
-
-      const order = e.target.value.split("_")[1] || "desc";
+      const [sort, order] = e.target.value.split("_");
       setSidebarData({
         ...sidebardata,
-        sort,
-        order,
+        sort: sort || "created_at",
+        order: order || "desc",
       });
     }
   };
@@ -209,7 +213,7 @@ export default function Search() {
               className="border rounded-lg p-3"
             >
               <option value="regularPrice_desc">Price high to low</option>
-              <option value="regularPrice_asc">Price low to hight</option>
+              <option value="regularPrice_asc">Price low to high</option>
               <option value="createdAt_desc">Latest</option>
               <option value="createdAt_asc">Oldest</option>
             </select>
