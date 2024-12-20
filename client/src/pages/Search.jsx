@@ -251,22 +251,19 @@ export default function Search() {
             ))}
         </div>
       </div>
-      // Added conditional rendering for loading and empty states
-      <div className="p-7 flex-wrap gap-4">
-        {!loading && listings.length === 0 && (
-          <p className="text-xl text-slate-700">No listings found!</p>
-        )}
-        {loading && (
-          <p className="text-xl text-slate-700 text-center w-full">
-            Loading listings...
-          </p>
-        )}
-        {!loading &&
-          listings &&
-          listings.map((listing) => (
-            <ListingItem key={listing._id} listing={listing} />
-          ))}
-      </div>
+      // Adjusted the wrapping container for better layout and responsiveness
+<div className="p-7 flex-wrap gap-4">
+  {!loading && listings.length === 0 && (
+    <p className="text-xl text-slate-700">No listings found!</p>
+  )}
+  {loading && (
+    <p className="text-xl text-slate-700 text-center w-full">Loading listings...</p>
+  )}
+  {!loading && listings && listings.map((listing) => (
+    <ListingItem key={listing._id} listing={listing} />
+  ))}
+</div>
+
     </div>
   );
 }
