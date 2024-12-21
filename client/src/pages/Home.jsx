@@ -1,8 +1,27 @@
 import React from 'react'
 
 export default function Home() {
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings.length;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", numberOfListings);
+  
+    try {
+      const res = await fetch(`/api/listing/get?${urlParams.toString()}`);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch additional listings: ${res.statusText}`);
+      }
+  
+      const data = await res.json();
+      if (data.length < 9) {
+        setShowMore(false); // Hide "Show More" if fewer than 9 listings are returned
+      }
+      setListings([...listings, ...data]); // Append new listings
+    } catch (error) {
+      console.error("Error fetching additional listings:", error);
+    }
+  };  
   const [showMore, setShowMore] = useState(false);
-
   useEffect(() => {
     const fetchListings = async () => {
       try {
