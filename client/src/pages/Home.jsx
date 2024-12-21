@@ -23,32 +23,31 @@ export default function Home() {
   };  
   const [showMore, setShowMore] = useState(false);
   useEffect(() => {
-    const fetchListings = async () => {
+    const fetchOfferListings = async () => {
       try {
-        setLoading(true);
-        setShowMore(false); // Reset showMore when a new search is performed
-  
-        const urlParams = new URLSearchParams(location.search);
-        const res = await fetch(`/api/listing/get?${urlParams.toString()}`);
-  
-        if (!res.ok) {
-          throw new Error(`Failed to fetch listings: ${res.statusText}`);
-        }
-  
+        const res = await fetch('/api/listing/get?offer=true&limit=4');
         const data = await res.json();
-        if (data.length > 8) {
-          setShowMore(true); // Enable "Show More" if more than 8 results
-        }
-        setListings(data);
+        setOfferListings(data);
       } catch (error) {
-        console.error("Error fetching listings:", error);
-      } finally {
-        setLoading(false);
+        console.log(error);
       }
     };
   
-    fetchListings();
-  }, [location.search]);
+    const fetchRentListings = async () => {
+      try {
+        const res = await fetch('/api/listing/get?type=rent&limit=4');
+        const data = await res.json();
+        setRentListings(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    fetchOfferListings();
+    fetchRentListings();
+  }, []);
+
+  
   return (
     <div className="flex-1">
       <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">
