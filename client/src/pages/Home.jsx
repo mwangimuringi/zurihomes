@@ -33,20 +33,8 @@ export default function Home() {
       }
     };
   
-    const fetchRentListings = async () => {
-      try {
-        const res = await fetch('/api/listing/get?type=rent&limit=4');
-        const data = await res.json();
-        setRentListings(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  
     fetchOfferListings();
-    fetchRentListings();
   }, []);
-
   
   return (
     <div className="flex-1">
