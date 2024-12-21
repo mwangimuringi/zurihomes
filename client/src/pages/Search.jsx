@@ -18,6 +18,7 @@ export default function Search() {
 
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
+  const [showMore, setShowMore] = useState(false);
   console.log(listings);
 
   useEffect(() => {
@@ -62,15 +63,18 @@ export default function Search() {
         }
 
         const data = await res.json();
+
+        if (data.length > 8) {
+          setShowMore(true);
+        }
         setListings(data);
       } catch (error) {
         console.error("Error fetching listings:", error);
-        alert("Failed to fetch listings. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchListings();
   }, [location.search]); // location.search dependency
 
