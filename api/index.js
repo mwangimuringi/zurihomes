@@ -5,6 +5,7 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js"
 import cookieParser from "cookie-parser";
+import path from "path"; // Added path module for directory handling
 dotenv.config();
 
 mongoose
@@ -16,27 +17,21 @@ mongoose
     console.log("MongoDB connection error:", err);
   });
 
+const __dirname = path.resolve(); // Resolving __dirname for correct static path
+
 const app = express();
 
 app.use(express.json());
-
 app.use(cookieParser());
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
 
-//connect routes
+// Connect routes
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
 
-app.use((error, req, res, next) => {
-  const statusCode = error.statusCode || 500;
-  const message = error.message || "Internal Server Error";
-  return res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
-});
+// Serving static files from client/dist
+app.use(express.static(path.join(__dirname, '/client/dist')));
