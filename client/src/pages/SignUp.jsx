@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth.jsx";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -39,6 +43,7 @@ export default function SignUp() {
       setError(error.message);
     }
   };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
@@ -48,19 +53,30 @@ export default function SignUp() {
           placeholder="Username"
           className="border rounded-lg p-3"
           id="username"
+          onChange={handleChange}
         />
         <input
           type="email"
           placeholder="Email"
           className="border rounded-lg p-3"
           id="email"
+          onChange={handleChange}
         />
+        <div className="relative">
         <input
-          type="password"
-          placeholder="Username"
-          className="border rounded-lg p-3"
-          id="password"
-        />
+            type={showPassword ? "text" : "password"} 
+            placeholder="Password"
+            className="border rounded-lg p-3 pr-10" 
+            id="password"
+            onChange={handleChange}
+          />
+          <span
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
+        </div>
         <button
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
@@ -72,8 +88,10 @@ export default function SignUp() {
       <div className="flex gap-2 mt-5">
         <p className="text-center text-sm text-slate-500">
           Already have an account?{" "}
-          <Link href="/sign-in">
-            <span className="text-blue-500">Sign In</span>
+          <Link to="/sign-in">
+            <span className="text-blue-500 hover:text-blue-600 cursor-pointer">
+              Sign In
+            </span>
           </Link>
         </p>
       </div>
