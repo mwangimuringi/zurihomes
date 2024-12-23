@@ -7,9 +7,11 @@ import {
   signInSuccess,
   signInFailure,
 } from "../redux/User/userSlice.js";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
