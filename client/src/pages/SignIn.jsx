@@ -58,13 +58,20 @@ export default function SignIn() {
           id="email"
           onChange={handleChange}
         />
+        <div className="relative">
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Password" 
-          className="border rounded-lg p-3"
+          className="border rounded-lg p-3 pr-60"
           id="password"
           onChange={handleChange}
         />
+        <span 
+        className=" absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" 
+        onClick={() => setShowPassword(!showPassword)}>
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </span>
+        </div>
         <button
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
@@ -76,7 +83,7 @@ export default function SignIn() {
       <div className="flex gap-2 mt-5">
         <p className="text-center text-sm text-slate-500">
           Don&apos;t have an account?{" "}
-          <Link to="/sign-up"> {/* Changed href to to */}
+          <Link to="/sign-up">
             <span className="text-blue-500">Sign Up</span>
           </Link>
         </p>
