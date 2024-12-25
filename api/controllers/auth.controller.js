@@ -2,19 +2,19 @@ import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
-import admin from '../utils/server.js'; 
+import admin from '../utils/server.js';  // Keep only this import
 
 export const signup = async (req, res, next) => {
   const { email, password, username } = req.body;
   try {
-    //Check if email is already taken
+    // Check if email is already taken
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return next(errorHandler(400, "Email already exists"));
     }
-    //Hashing the password
+    // Hashing the password
     const hashedPassword = bcryptjs.hashSync(password, 10);
-    //Saving info in DB user model
+    // Saving info in DB user model
     const newUser = new User({
       username,
       email,

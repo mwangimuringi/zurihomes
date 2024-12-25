@@ -1,12 +1,17 @@
+import { initializeApp, cert } from "firebase-admin/app";
 import admin from "firebase-admin";
 
-const serviceAccount = {
-  type: "service_account",
-  project_id: process.env.FIREBASE_PROJECT_ID,
-  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  client_email: process.env.FIREBASE_CLIENT_EMAIL,
-};
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+// Dynamically import the service account key JSON file
+const serviceAccount = await import("file:///C:/Users/julius/Downloads/zurihomes-1-firebase-adminsdk-aooro-b0d790c620.json", {
+  assert: { type: "json" },
 });
+
+const app = initializeApp({
+  credential: cert(serviceAccount.default), 
+});
+
+const db = admin.firestore(); 
+const auth = admin.auth(); 
+
+export { db, auth };
+export default admin; 
