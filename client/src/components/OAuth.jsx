@@ -1,5 +1,5 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import app from "../firebase";
+import { app } from "../firebase"; 
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/User/userSlice.js";
 import { useNavigate } from "react-router-dom";
@@ -13,25 +13,32 @@ export default function OAuth() {
       const auth = getAuth(app);
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
 
-      // Send user info to the server
+      // Extract user details
+      const { displayName, email, photoURL } = result.user;
+
+      // Send data to the backend for further processing
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: user.displayName,
-          email: user.email,
-          photo: user.photoURL,
+          name: displayName,
+          email,
+          photo: photoURL,
         }),
       });
+
       const data = await res.json();
-      dispatch(signInSuccess(data));
-      navigate("/");
+      if (res.ok) {
+        dispatch(signInSuccess(data.user)); // Dispatch the user details to the Redux store
+        navigate("/");
+      } else {
+        console.error("Backend error:", data.message);
+      }
     } catch (error) {
-      console.error("Google Sign-In error:", error);
+      console.error("Google Sign-In failed:", error);
     }
   };
 
