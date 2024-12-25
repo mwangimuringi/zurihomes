@@ -1,5 +1,5 @@
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { app } from "../firebase";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { app } from "../firebase"; 
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/User/userSlice.js";
 import { useNavigate } from "react-router-dom";
@@ -7,33 +7,41 @@ import { useNavigate } from "react-router-dom";
 export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleGoogleClick = async () => {
     try {
-      const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
 
-      // popover window for sign in
-      const result = await auth.signInWithPopup(auth, provider);
+      // Extract user details
+      const { displayName, email, photoURL } = result.user;
 
-      //sending data to server
+      // Send data to the backend for further processing
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: result.user.displayName,
-          email: result.user.email,
-          photo: result.user.photoURL,
+          name: displayName,
+          email,
+          photo: photoURL,
         }),
       });
+
       const data = await res.json();
-      dispatch(signInSuccess(data));
-      navigate('/');
+      if (res.ok) {
+        dispatch(signInSuccess(data.user)); // Dispatch the user details to the Redux store
+        navigate("/");
+      } else {
+        console.error("Backend error:", data.message);
+      }
     } catch (error) {
-      console.log("could not connect to google", error);
+      console.error("Google Sign-In failed:", error);
     }
   };
+
   return (
     <button
       onClick={handleGoogleClick}
