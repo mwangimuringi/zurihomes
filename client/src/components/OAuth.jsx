@@ -34,8 +34,7 @@ export default function OAuth() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("Backend error:", errorData.message);
-        alert("Failed to authenticate with Google. Please try again.");
+        setError(errorData.message);
         return;
       }
 
@@ -43,8 +42,7 @@ export default function OAuth() {
       dispatch(signInSuccess(data.user)); // Save user data in Redux
       navigate("/");
     } catch (error) {
-      console.error("Google Sign-In failed:", error.message);
-      alert("Google Sign-In failed. Please try again.");
+      setError(error.message);
     }
   };
 
