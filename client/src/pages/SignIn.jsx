@@ -34,13 +34,13 @@ export default function SignIn() {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (!res.ok) {
         const errorData = await res.json();
         dispatch(signInFailure(errorData.message || "Sign-in failed"));
         return;
       }
-  
+
       const data = await res.json();
       dispatch(signInSuccess(data));
       navigate("/");
@@ -49,7 +49,7 @@ export default function SignIn() {
       console.error(error);
     }
   };
-  
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
@@ -62,18 +62,20 @@ export default function SignIn() {
           onChange={handleChange}
         />
         <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          placeholder="Password" 
-          className="border rounded-lg p-3 pr-60"
-          id="password"
-          onChange={handleChange}
-        />
-        <span 
-        className=" absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" 
-        onClick={() => setShowPassword(!showPassword)}>
-          {showPassword ? <FaEyeSlash /> : <FaEye />}
-        </span>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className="border rounded-lg p-3 pr-60"
+            id="password"
+            onChange={handleChange}
+          />
+          <span
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+            onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
         </div>
         <button
           disabled={loading}
