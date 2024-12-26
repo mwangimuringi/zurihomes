@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
@@ -47,13 +47,22 @@ export default function OAuth() {
   };
 
   return (
-    <button
-      onClick={handleGoogleClick}
-      type="button"
-      className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
-      aria-label="Sign in with Google"
-    >
-      Continue with Google
-    </button>
+    <div>
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={() => setError(null)}>Dismiss</button>{" "}
+        </div>
+      )}
+
+      <button
+        onClick={handleGoogleClick}
+        type="button"
+        className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        aria-label="Sign in with Google"
+      >
+        Continue with Google
+      </button>
+    </div>
   );
 }
