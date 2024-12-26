@@ -34,19 +34,22 @@ export default function SignIn() {
         },
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      console.log(data);
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        dispatch(signInFailure(errorData.message || "Sign-in failed"));
         return;
       }
+  
+      const data = await res.json();
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      dispatch(signInFailure(error.message));
+      dispatch(signInFailure("Something went wrong. Please try again."));
+      console.error(error);
     }
   };
-
+  
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
