@@ -10,7 +10,7 @@ import {
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function SignIn() {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
