@@ -49,9 +49,15 @@ export default function OAuth() {
   return (
     <div>
       {error && (
-        <div className="error-message">
-          <p>{error}</p>
-          <button onClick={() => setError(null)}>Dismiss</button>{" "}
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+          <span className="block sm:inline">{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-500 hover:text-red-800"
+            aria-label="Dismiss Error"
+          >
+            ✖
+          </button>{" "}
         </div>
       )}
 
