@@ -28,31 +28,68 @@ export default function CreateListing() {
     furnished: false,
   });
   const [imageUploadError, setImageUploadError] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, _setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   console.log(formData);
-  const handleImageSubmit = (e) => {
-    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
-      const promises = [];
-      for (let i = 0; i < files.length; i++) {
-        promises.push(storeimage(files[i]));
-      }
-      Promise.all(promises)
-        .then((urls) => {
-          setFormData({
-            ...formData,
-            imageUrls: formData.imageUrls.concat(urls),
-          });
-          setImageUploadError(false);
-        })
-        .catch((error) => {
-          setImageUploadError("Error uploading image (2 mb max per image)");
-        });
-    } else {
+  // const handleImageSubmit = (e) => {
+  //   if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+  //     const promises = [];
+  //     for (let i = 0; i < files.length; i++) {
+  //       promises.push(storeimage(files[i]));
+  //     }
+  //     Promise.all(promises)
+  //       .then((urls) => {
+  //         setFormData({
+  //           ...formData,
+  //           imageUrls: formData.imageUrls.concat(urls),
+  //         });
+  //         setImageUploadError(false);
+  //       })
+  //       .catch((error) => {
+  //         setImageUploadError("Error uploading image (2 mb max per image)");
+  //       });
+  //   } else {
+  //     setImageUploadError("You can only upload 6 images per listing");
+  //   }
+  // };
+  const handleImageSubmit = async () => {
+    setImageUploadError(false);
+
+    if (files.length + formData.imageUrls.length > 6) {
       setImageUploadError("You can only upload 6 images per listing");
+      return;
+    }
+
+    try {
+      const uploadPromises = files.map((file) => storeimage(file));
+      const urls = await Promise.all(uploadPromises);
+
+      setFormData((prev) => ({
+        ...prev,
+        imageUrls: [...prev.imageUrls, ...urls],
+      }));
+
+      // Clear files after successful upload
+      setFiles([]);
+    } catch (error) {
+      setImageUploadError("Error uploading image (2 mb max per image)");
     }
   };
+
+  // File Preview (Optional, for selected files before upload)
+  const previewImages = files.map((file) => {
+    const url = URL.createObjectURL(file);
+    return (
+      <img
+        key={file.name}
+        src={url}
+        alt={file.name}
+        className="w-40 h-40 object-cover rounded-lg"
+      />
+    );
+  });
+
   const storeimage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -77,45 +114,108 @@ export default function CreateListing() {
       );
     });
   };
+  // const handleChange = (e) => {
+  //   if (e.target.id === "sale" || e.target.id === "rent") {
+  //     setFormData({
+  //       ...formData,
+  //       type: e.target.id,
+  //     });
+  //   }
+  //   if (
+  //     e.target.id === "parking" ||
+  //     e.target.id === "furnished" ||
+  //     e.target.id === "offer"
+  //   ) {
+  //     setFormData({
+  //       ...formData,
+  //       [e.target.id]: e.target.checked,
+  //     });
+  //   }
+  //   if (
+  //     e.target.id === "number" ||
+  //     e.target.id === "text" ||
+  //     e.target.id === "textarea"
+  //   ) {
+  //     setFormData({
+  //       ...formData,
+  //       [e.target.id]: e.target.value,
+  //     });
+  //   }
+  // };
+
   const handleChange = (e) => {
-    if (e.target.id === "sale" || e.target.id === "rent") {
+    const { id, value, type, checked } = e.target;
+
+    // Handle checkboxes
+    if (type === "checkbox") {
       setFormData({
         ...formData,
-        type: e.target.id,
+        [id]: checked,
+      });
+    } else {
+      // Handle other input types
+      setFormData({
+        ...formData,
+        [id]: value,
       });
     }
-    if (
-      e.target.id === "parking" ||
-      e.target.id === "furnished" ||
-      e.target.id === "offer"
-    ) {
+    if (type === "number") {
       setFormData({
         ...formData,
-        [e.target.id]: e.target.checked,
-      });
-    }
-    if (
-      e.target.id === "number" ||
-      e.target.id === "text" ||
-      e.target.id === "textarea"
-    ) {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
+        [id]: +value,
       });
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     //conditional validation
+  //     if (formData.imageUrls.length < 1)
+  //       return setError("You must upload atleast 1 image");
+  //     //convert to Number
+  //     if (+formData.regular_price < +formData.discounted_price)
+  //       return setError("Discounted price must be less than regular price");
+  //     setLoading(true);
+  //     setError(false);
+  //     const res = await fetch("/api/listing/create", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         ...formData,
+  //         useRef: currentUser._id,
+  //       }),
+  //     });
+  //     const data = await res.json();
+  //     setLoading(false);
+  //     if (data.success === false) {
+  //       setError(data.message);
+  //     }
+  //     navigate(`/listing/${data._id}`);
+  //   } catch (error) {
+  //     setError(error.message);
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(false);
+
+    if (formData.imageUrls.length < 1) {
+      setError("You must upload atleast 1 image");
+      return;
+    }
+
+    if (+formData.regular_price < +formData.discounted_price) {
+      setError("Discounted price must be less than regular price");
+      return;
+    }
+
     try {
-      //conditional validation
-      if (formData.imageUrls.length < 1)
-        return setError("You must upload atleast 1 image");
-      //convert to Number
-      if (+formData.regular_price < +formData.discounted_price)
-        return setError("Discounted price must be less than regular price");
       setLoading(true);
-      setError(false);
       const res = await fetch("/api/listing/create", {
         method: "POST",
         headers: {
@@ -126,18 +226,23 @@ export default function CreateListing() {
           useRef: currentUser._id,
         }),
       });
-      const data = await res.json();
+
+      const result = await res.json();
       setLoading(false);
-      if (data.success === false) {
-        setError(data.message);
+
+      if (!result.success) {
+        setError(result.message);
+        return;
       }
-      navigate(`/listing/${data._id}`);
+
+      navigate(`/listing/${result._id}`);
     } catch (error) {
-      setError(error.message);
+      setError(
+        "An error occurred while creating the listing. Please try again."
+      );
       setLoading(false);
     }
   };
-
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
@@ -257,8 +362,8 @@ export default function CreateListing() {
               <input
                 type="number"
                 id="regular_price"
-                min="Ksh 1000"
-                max="Ksh 1000,000"
+                min="1000"
+                max="1000000"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
                 onChange={handleChange}
@@ -321,13 +426,14 @@ export default function CreateListing() {
             {imageUploadError && imageUploadError}
           </p>
           {formData.imageUrls.length > 0 &&
-            formData.imageUrls.map((url) => {
+            formData.imageUrls.map((url, index) => (
               <img
+                key={index}
                 src={url}
-                alt="listing image"
+                alt={`listing - ${index}`}
                 className="w-40 h-40 object-cover rounded-lg"
-              />;
-            })}
+              />
+            ))}
           <button
             disabled={loading || uploading}
             className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
