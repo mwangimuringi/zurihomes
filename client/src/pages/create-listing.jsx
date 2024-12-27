@@ -142,6 +142,12 @@ export default function CreateListing() {
         [id]: value,
       });
     }
+    if (type === "number") {
+      setFormData({
+        ...formData,
+        [id]: +value,
+      });
+    }
   };
 
   // const handleSubmit = async (e) => {
@@ -339,8 +345,8 @@ export default function CreateListing() {
               <input
                 type="number"
                 id="regular_price"
-                min="Ksh 1000"
-                max="Ksh 1000,000"
+                min="1000"
+                max="1000000"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
                 onChange={handleChange}
