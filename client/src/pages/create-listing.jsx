@@ -60,18 +60,35 @@ export default function CreateListing() {
       setImageUploadError("You can only upload 6 images per listing");
       return;
     }
-    const uploadPromises = Array.from(files).map((file) => storeimage(file));
 
     try {
+      const uploadPromises = files.map((file) => storeimage(file));
       const urls = await Promise.all(uploadPromises);
+
       setFormData((prev) => ({
         ...prev,
         imageUrls: [...prev.imageUrls, ...urls],
       }));
+
+      // Clear files after successful upload
+      setFiles([]);
     } catch (error) {
       setImageUploadError("Error uploading image (2 mb max per image)");
     }
   };
+
+  // File Preview (Optional, for selected files before upload)
+  const previewImages = files.map((file) => {
+    const url = URL.createObjectURL(file);
+    return (
+      <img
+        key={file.name}
+        src={url}
+        alt={file.name}
+        className="w-40 h-40 object-cover rounded-lg"
+      />
+    );
+  });
 
   const storeimage = async (file) => {
     return new Promise((resolve, reject) => {
