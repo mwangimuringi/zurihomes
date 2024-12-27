@@ -32,27 +32,27 @@ export default function CreateListing() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   console.log(formData);
-  const handleImageSubmit = (e) => {
-    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
-      const promises = [];
-      for (let i = 0; i < files.length; i++) {
-        promises.push(storeimage(files[i]));
-      }
-      Promise.all(promises)
-        .then((urls) => {
-          setFormData({
-            ...formData,
-            imageUrls: formData.imageUrls.concat(urls),
-          });
-          setImageUploadError(false);
-        })
-        .catch((error) => {
-          setImageUploadError("Error uploading image (2 mb max per image)");
-        });
-    } else {
-      setImageUploadError("You can only upload 6 images per listing");
-    }
-  };
+  // const handleImageSubmit = (e) => {
+  //   if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+  //     const promises = [];
+  //     for (let i = 0; i < files.length; i++) {
+  //       promises.push(storeimage(files[i]));
+  //     }
+  //     Promise.all(promises)
+  //       .then((urls) => {
+  //         setFormData({
+  //           ...formData,
+  //           imageUrls: formData.imageUrls.concat(urls),
+  //         });
+  //         setImageUploadError(false);
+  //       })
+  //       .catch((error) => {
+  //         setImageUploadError("Error uploading image (2 mb max per image)");
+  //       });
+  //   } else {
+  //     setImageUploadError("You can only upload 6 images per listing");
+  //   }
+  // };
   const storeimage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -157,7 +157,7 @@ export default function CreateListing() {
   //   }
   // };
 
-  const handleSubmit = async () => {
+  const handleImageSubmit = async () => {
     setImageUploadError(false);
 
     if (files.length + formData.imageUrls.length > 6) {
