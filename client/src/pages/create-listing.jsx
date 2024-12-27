@@ -53,6 +53,26 @@ export default function CreateListing() {
   //     setImageUploadError("You can only upload 6 images per listing");
   //   }
   // };
+  const handleImageSubmit = async () => {
+    setImageUploadError(false);
+
+    if (files.length + formData.imageUrls.length > 6) {
+      setImageUploadError("You can only upload 6 images per listing");
+      return;
+    }
+    const uploadPromises = Array.from(files).map((file) => storeimage(file));
+
+    try {
+      const urls = await Promise.all(uploadPromises);
+      setFormData((prev) => ({
+        ...prev,
+        imageUrls: [...prev.imageUrls, ...urls],
+      }));
+    } catch (error) {
+      setImageUploadError("Error uploading image (2 mb max per image)");
+    }
+  };
+
   const storeimage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -157,23 +177,47 @@ export default function CreateListing() {
   //   }
   // };
 
-  const handleImageSubmit = async () => {
-    setImageUploadError(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(false);
 
-    if (files.length + formData.imageUrls.length > 6) {
-      setImageUploadError("You can only upload 6 images per listing");
+    if (formData.imageUrls.length < 1) {
+      setError("You must upload atleast 1 image");
       return;
     }
-    const uploadPromises = Array.from(files).map((file) => storeimage(file));
+
+    if (+formData.regular_price < +formData.discounted_price) {
+      setError("Discounted price must be less than regular price");
+      return;
+    }
 
     try {
-      const urls = await Promise.all(uploadPromises);
-      setFormData((prev) => ({
-        ...prev,
-        imageUrls: [...prev.imageUrls, ...urls],
-      }));
+      setLoading(true);
+      const res = await fetch("/api/listing/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          useRef: currentUser._id,
+        }),
+      });
+
+      const result = await res.json();
+      setLoading(false);
+
+      if (!result.success) {
+        setError(result.message);
+        return;
+      }
+
+      navigate(`/listing/${result._id}`);
     } catch (error) {
-      setImageUploadError("Error uploading image (2 mb max per image)");
+      setError(
+        "An error occurred while creating the listing. Please try again."
+      );
+      setLoading(false);
     }
   };
   return (
