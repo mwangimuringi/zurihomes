@@ -340,13 +340,14 @@ export default function CreateListing() {
             {imageUploadError && imageUploadError}
           </p>
           {formData.imageUrls.length > 0 &&
-            formData.imageUrls.map((url) => {
+            formData.imageUrls.map((url, index) => (
               <img
+                key={index}
                 src={url}
-                alt="listing image"
+                alt={`listing - ${index}`}
                 className="w-40 h-40 object-cover rounded-lg"
-              />;
-            })}
+              />
+            ))}
           <button
             disabled={loading || uploading}
             className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
