@@ -28,7 +28,7 @@ export default function CreateListing() {
     furnished: false,
   });
   const [imageUploadError, setImageUploadError] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, _setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   console.log(formData);
@@ -77,34 +77,53 @@ export default function CreateListing() {
       );
     });
   };
+  // const handleChange = (e) => {
+  //   if (e.target.id === "sale" || e.target.id === "rent") {
+  //     setFormData({
+  //       ...formData,
+  //       type: e.target.id,
+  //     });
+  //   }
+  //   if (
+  //     e.target.id === "parking" ||
+  //     e.target.id === "furnished" ||
+  //     e.target.id === "offer"
+  //   ) {
+  //     setFormData({
+  //       ...formData,
+  //       [e.target.id]: e.target.checked,
+  //     });
+  //   }
+  //   if (
+  //     e.target.id === "number" ||
+  //     e.target.id === "text" ||
+  //     e.target.id === "textarea"
+  //   ) {
+  //     setFormData({
+  //       ...formData,
+  //       [e.target.id]: e.target.value,
+  //     });
+  //   }
+  // };
+
   const handleChange = (e) => {
-    if (e.target.id === "sale" || e.target.id === "rent") {
+    const { id, value, type, checked } = e.target;
+  
+    // Handle checkboxes
+    if (type === "checkbox") {
       setFormData({
         ...formData,
-        type: e.target.id,
+        [id]: checked,
       });
-    }
-    if (
-      e.target.id === "parking" ||
-      e.target.id === "furnished" ||
-      e.target.id === "offer"
-    ) {
+    } else {
+      // Handle other input types
       setFormData({
         ...formData,
-        [e.target.id]: e.target.checked,
-      });
-    }
-    if (
-      e.target.id === "number" ||
-      e.target.id === "text" ||
-      e.target.id === "textarea"
-    ) {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
+        [id]: value,
       });
     }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
