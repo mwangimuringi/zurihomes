@@ -108,7 +108,7 @@ export default function CreateListing() {
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
-  
+
     // Handle checkboxes
     if (type === "checkbox") {
       setFormData({
@@ -123,40 +123,59 @@ export default function CreateListing() {
       });
     }
   };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     //conditional validation
+  //     if (formData.imageUrls.length < 1)
+  //       return setError("You must upload atleast 1 image");
+  //     //convert to Number
+  //     if (+formData.regular_price < +formData.discounted_price)
+  //       return setError("Discounted price must be less than regular price");
+  //     setLoading(true);
+  //     setError(false);
+  //     const res = await fetch("/api/listing/create", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         ...formData,
+  //         useRef: currentUser._id,
+  //       }),
+  //     });
+  //     const data = await res.json();
+  //     setLoading(false);
+  //     if (data.success === false) {
+  //       setError(data.message);
+  //     }
+  //     navigate(`/listing/${data._id}`);
+  //   } catch (error) {
+  //     setError(error.message);
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+    setImageUploadError(false);
+
+    if (files.length + formData.imageUrls.length > 6) {
+      setImageUploadError("You can only upload 6 images per listing");
+      return;
+    }
+    const uploadPromises = Array.from(files).map((file) => storeimage(file));
+
     try {
-      //conditional validation
-      if (formData.imageUrls.length < 1)
-        return setError("You must upload atleast 1 image");
-      //convert to Number
-      if (+formData.regular_price < +formData.discounted_price)
-        return setError("Discounted price must be less than regular price");
-      setLoading(true);
-      setError(false);
-      const res = await fetch("/api/listing/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          useRef: currentUser._id,
-        }),
-      });
-      const data = await res.json();
-      setLoading(false);
-      if (data.success === false) {
-        setError(data.message);
-      }
-      navigate(`/listing/${data._id}`);
+      const urls = await Promise.all(uploadPromises);
+      setFormData((prev) => ({
+        ...prev,
+        imageUrls: [...prev.imageUrls, ...urls],
+      }));
     } catch (error) {
-      setError(error.message);
-      setLoading(false);
+      setImageUploadError("Error uploading image (2 mb max per image)");
     }
   };
-
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
