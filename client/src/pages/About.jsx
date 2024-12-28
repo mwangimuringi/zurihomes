@@ -9,6 +9,11 @@ export default function About() {
         sale. It is a web application that allows users to browse listings and
         make offers and purchases.
       </p>
+      <p className="text-slate-700 mb-4">
+        Our mission is to help our clients achieve their real estate goals by
+        providing expert advice, personalized service, and a deep understanding
+        of the local market.
+      </p>
     </div>
   );
 }
