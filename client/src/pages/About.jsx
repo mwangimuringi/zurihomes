@@ -14,6 +14,12 @@ export default function About() {
         providing expert advice, personalized service, and a deep understanding
         of the local market.
       </p>
+      <p className="text-slate-700 mb-4">
+        At ZuriHomes, we believe that the best way to find the perfect home for
+        you is to get to know the people who live there. We offer a wide range
+        of properties for sale, from apartments to houses, and we are committed
+        to helping our clients find the perfect place to live.
+      </p>
     </div>
   );
 }
