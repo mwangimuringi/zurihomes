@@ -73,6 +73,26 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {/* Contact Information Section */}
+      <section className="mt-12 max-w-5xl mx-auto px-6">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800">Contact Us</h2>
+        <div className="bg-white shadow p-6 rounded-md">
+          <p className="text-gray-700 text-lg mb-4">
+            We’d love to hear from you! Reach out to us via email or phone for
+            any inquiries.
+          </p>
+          <p className="text-gray-700 mb-2">
+            <strong>Email:</strong> support@zurihomes.com
+          </p>
+          <p className="text-gray-700 mb-2">
+            <strong>Phone:</strong> +1 800 123 4567
+          </p>
+          <p className="text-gray-700">
+            <strong>Address:</strong> 123 Main Street, Nairobi, Kenya
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
