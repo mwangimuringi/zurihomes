@@ -31,6 +31,18 @@ export default function About() {
           </button>
         </div>
       </div>
+      <section className="mt-12 max-w-5xl px-6">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">
+          What Our Clients Say
+        </h2>
+        <div className="bg-white shadow p-6 rounded-md">
+          <p className="italic text-gray-700">
+          "ZuriHomes made it so easy for us to find our dream home! The team was
+          professional and supportive every step of the way."
+          </p>
+          <h4 className="mt-4 text-right font-bold text-gray-900">John Smith</h4>
+        </div>
+      </section>
     </div>
   );
 }
