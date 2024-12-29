@@ -29,10 +29,16 @@ export default function About() {
 
         {/* Call-to-Action Buttons */}
         <div className="mt-10 text-center">
-          <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            aria-label="Browse listings on ZuriHomes"
+          >
             Browse Listings
           </button>
-          <button className="ml-4 bg-gray-100 text-blue-500 py-2 px-4 rounded hover:bg-gray-200">
+          <button
+            className="ml-4 bg-gray-100 text-blue-500 py-2 px-4 rounded hover:bg-gray-200"
+            aria-label="Contact ZuriHomes for inquiries"
+          >
             Contact Us
           </button>
         </div>
@@ -48,7 +54,10 @@ export default function About() {
             "ZuriHomes made it so easy for us to find our dream home! The team
             was professional and supportive every step of the way."
           </p>
-          <h4 className="mt-4 text-right font-bold text-gray-900">
+          <h4
+            className="mt-4 text-right font-bold text-gray-900"
+            aria-label="Testimonial by John Doe"
+          >
             - John Doe
           </h4>
         </div>
@@ -58,7 +67,10 @@ export default function About() {
       <section className="mt-12 max-w-5xl mx-auto px-6">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Meet Our Team</h2>
         <div className="flex flex-col md:flex-row gap-6">
-          <div className="bg-white shadow p-6 rounded-md flex-1">
+          <div
+            className="bg-white shadow p-6 rounded-md flex-1"
+            aria-label="Team member profile for Jane Smith"
+          >
             <h3 className="text-xl font-bold text-gray-900">Jane Smith</h3>
             <p className="text-gray-600">CEO & Founder</p>
             <p className="mt-4 text-gray-700 text-sm">
@@ -66,7 +78,10 @@ export default function About() {
               experience in real estate and technology.
             </p>
           </div>
-          <div className="bg-white shadow p-6 rounded-md flex-1">
+          <div
+            className="bg-white shadow p-6 rounded-md flex-1"
+            aria-label="Team member profile for Mark Johnson"
+          >
             <h3 className="text-xl font-bold text-gray-900">Mark Johnson</h3>
             <p className="text-gray-600">CTO</p>
             <p className="mt-4 text-gray-700 text-sm">
@@ -98,21 +113,21 @@ export default function About() {
             <a
               href="https://facebook.com/zurihomes"
               className="text-blue-500 hover:text-blue-700"
-              aria-label="Facebook"
+              aria-label="Visit ZuriHomes on Facebook"
             >
               Facebook
             </a>
             <a
               href="https://twitter.com/zurihomes"
               className="text-blue-500 hover:text-blue-700"
-              aria-label="Twitter"
+              aria-label="Visit ZuriHomes on Twitter"
             >
               Twitter
             </a>
             <a
               href="https://linkedin.com/company/zurihomes"
               className="text-blue-500 hover:text-blue-700"
-              aria-label="LinkedIn"
+              aria-label="Visit ZuriHomes on LinkedIn"
             >
               LinkedIn
             </a>
