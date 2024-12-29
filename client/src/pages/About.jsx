@@ -20,6 +20,16 @@ export default function About() {
           providing expert advice, personalized service, and a deep understanding 
           of the local market.
         </p>
+
+        {/* Call-to-action buttons */}
+        <div className="mt-10 text-center">
+          <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+            Browse Listings
+          </button>
+          <button className="ml-4 bg-gray-100 text-blue-500 py-2 px-4 rounded hover:bg-gray-200">
+            Contact Us
+          </button>
+        </div>
       </div>
     </div>
   );
