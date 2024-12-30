@@ -1,17 +1,17 @@
-import { createUploadthing } from "uploadthing/express";
-import type { FileRouter } from "uploadthing/server";
+// api/uploadthing/uploadthing.ts
+import { createUploadthing, type FileRouter } from "uploadthing/express";
 
 const f = createUploadthing();
 
-export const uploadRouter: FileRouter = {
-  imageUploader: f()
-    .onUploadStart(({ file }) => {
-      // Optionally validate the file here
-      console.log("Upload started:", file.name);
-    })
-    .onUploadComplete(({ file }) => {
-      console.log("Upload completed:", file);
-    }),
-};
+export const uploadRouter = {
+  imageUploader: f({
+    image: {
+      maxFileSize: "4MB",
+      maxFileCount: 4,    
+    },
+  }).onUploadComplete((data) => {
+    console.log("Upload completed", data); 
+  }),
+} satisfies FileRouter;
 
 export type OurFileRouter = typeof uploadRouter;
