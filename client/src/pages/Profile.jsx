@@ -99,6 +99,7 @@ export default function Profile() {
       dispatch(updateUserFailure(error.message));
     }
   };
+
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
@@ -130,6 +131,7 @@ export default function Profile() {
       dispatch(signoutUserFailure(data.message));
     }
   };
+
   const handleShowListings = async () => {
     try {
       setShowListingsError(false);
@@ -144,6 +146,7 @@ export default function Profile() {
       setShowListingsError(true);
     }
   };
+
   const handleListingDelete = async (listingId) => {
     try {
       const res = await fetch(`/api/listings/delete/${listingId}`, {
@@ -280,8 +283,8 @@ export default function Profile() {
                 >
                   Delete
                 </button>
-                <Link to = {`/update-listing/${listing._id}`}>
-                <button className="text-green-700 uppercase">Edit</button>
+                <Link to={`/update-listing/${listing._id}`} className="text-blue-700">
+                  Update
                 </Link>
               </div>
             </div>
