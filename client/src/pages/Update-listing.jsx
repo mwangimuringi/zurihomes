@@ -61,7 +61,7 @@ export default function UpdateListing() {
           setImageUploadError(false);
         })
         .catch((error) => {
-          setImageUploadError("Error uploading image (2 mb max per image)");
+          setImageUploadError("Error uploading image (5 mb max per image)");
         });
     } else {
       setImageUploadError("You can only upload 6 images per listing");
