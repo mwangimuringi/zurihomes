@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createUploadThing } from '@uploadthing/react';
+import { createUploadThing } from '@uploadthing/react'; 
 
 export default function CreateListing() {
   const { currentUser } = useSelector((state) => state.user);
@@ -25,35 +25,58 @@ export default function CreateListing() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const handleImageSubmit = async (e) => {
+  const uploadRouter = createUploadThing(); 
+  const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
       setImageUploadError(false);
+      const promises = [];
 
-      try {
-        const uploadUrls = await uploadImages(files);
-        setFormData({
-          ...formData,
-          imageUrls: formData.imageUrls.concat(uploadUrls),
-        });
-        setImageUploadError(false);
-      } catch (err) {
-        setImageUploadError('Image upload failed (2 mb max per image)');
-      } finally {
-        setUploading(false);
+      for (let i = 0; i < files.length; i++) {
+        promises.push(storeImage(files[i]));
       }
+      Promise.all(promises)
+        .then((urls) => {
+          setFormData({
+            ...formData,
+            imageUrls: formData.imageUrls.concat(urls),
+          });
+          setImageUploadError(false);
+          setUploading(false);
+        })
+        .catch((err) => {
+          setImageUploadError('Image upload failed (2 mb max per image)');
+          setUploading(false);
+        });
     } else {
       setImageUploadError('You can only upload 6 images per listing');
       setUploading(false);
     }
   };
 
-  const uploadImages = async (files) => {
-    const upload = createUploadThing();
-    const uploadPromises = Array.from(files).map((file) => upload(file));
-    const uploadResults = await Promise.all(uploadPromises);
-    return uploadResults.map((result) => result.url);
+  const storeImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
   };
 
   const handleRemoveImage = (index) => {
@@ -124,7 +147,6 @@ export default function CreateListing() {
       setLoading(false);
     }
   };
-
   return (
     <main className='p-3 max-w-4xl mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
