@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createUploadThing } from '@uploadthing/react'; 
+import { generateUploadButton } from '@uploadthing/react';
 
 export default function CreateListing() {
   const { currentUser } = useSelector((state) => state.user);
@@ -25,7 +25,10 @@ export default function CreateListing() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const uploadRouter = createUploadThing(); 
+  // Generate the upload button with the backend URL
+  const UploadButton = generateUploadButton({
+    url: 'https://localhost:3000/api/uploadthing',
+  });
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
@@ -45,7 +48,7 @@ export default function CreateListing() {
           setUploading(false);
         })
         .catch((err) => {
-          setImageUploadError('Image upload failed (5 mb max per image)');
+          setImageUploadError('Image upload failed (2 mb max per image)');
           setUploading(false);
         });
     } else {
