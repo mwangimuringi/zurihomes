@@ -6,7 +6,7 @@ import { generateUploadButton } from '@uploadthing/react';
 export default function CreateListing() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const [files, setFiles] = useState([]);
+  const [files, _setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
     name: '',
@@ -315,7 +315,7 @@ export default function CreateListing() {
             </span>
           </p>
           <div className='flex gap-4'>
-            <UploadButton />
+          <UploadButton className="text-black" />
           </div>
           <p className='text-red-700 text-sm'>
             {imageUploadError && imageUploadError}
