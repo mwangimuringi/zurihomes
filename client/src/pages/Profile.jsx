@@ -54,8 +54,8 @@ export default function Profile() {
 
     uploadProfileImage();
   }, [file]);
- 
- const handleFileUpload = async (file) => {
+
+  const handleFileUpload = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
