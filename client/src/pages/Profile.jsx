@@ -3,13 +3,6 @@ import { useSelector } from "react-redux";
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
-import { app } from "../firebase";
-import {
   updateUserStart,
   updateUserFailure,
   updateUserSuccess,
@@ -17,15 +10,15 @@ import {
   deleteUserFailure,
   deleteUserSuccess,
   signoutUserStart,
+  signoutUserFailure,
+  signoutUserSuccess,
 } from "../redux/User/userSlice";
 import { useDispatch } from "react-redux";
+import { UploadButton } from "@uploadthing/react";
 
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  const [file, setFile] = useState(undefined);
-  const [filePercentage, setFilePercentage] = useState(0);
-  const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [userListings, setUserListings] = useState([]);
@@ -38,32 +31,32 @@ export default function Profile() {
     }
   }, [file]);
 
-  const handleFileUpload = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-  
-    try {
-      const res = await fetch("/api/uploadthing/profile-picture", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-  
-      if (res.ok) {
-        setFormData({
-          ...formData,
-          avatar: data.fileUrl, // Assuming UploadThing returns `fileUrl`
-        });
-      } else {
+  const handleFileUpload = (file) => {
+    const storage = getStorage(app);
+    const fileName = `${new Date().getTime()}_${file.name}`;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePercentage(Math.round(progress));
+      },
+      (error) => {
         setFileUploadError(true);
-        console.error("Upload failed:", data.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({
+            ...formData,
+            avatar: downloadURL,
+          });
+        });
       }
-    } catch (error) {
-      setFileUploadError(true);
-      console.error("Error uploading file:", error);
-    }
+    );
   };
-  
 
   const handleChange = (e) => {
     setFormData({
@@ -148,54 +141,29 @@ export default function Profile() {
     }
   };
 
-  const handleListingDelete = async (listingId) => {
-    try {
-      const res = await fetch(`/api/listings/delete/${listingId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        console.log(data.message);
-        return;
-      }
-      setUserListings((prev) =>
-        prev.filter((listing) => listing._id !== listingId)
-      );
-    } catch (error) {
-      console.log(error.message); // Add more later
-    }
-  };
-
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          onChange={(e) => setFile(e.target.files[0])}
-          type="file"
-          ref={fileRef}
-          hidden
-          accept="image/*"
+        <UploadButton
+          endpoint="profilePictureUploader"
+          onClientUploadComplete={(res) => {
+            if (res && res.length > 0) {
+              setFormData({
+                ...formData,
+                avatar: res[0].fileUrl,
+              });
+            }
+          }}
+          onUploadError={(error) => {
+            console.error("Error uploading:", error);
+          }}
         />
         <img
-          onClick={() => fileRef.current.click()}
           src={formData?.avatar || currentUser.avatar}
           alt="profile"
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
         />
-        <p className="text-center text-slate-700 text-self-center">
-          {fileUploadError && (
-            <span className="text-red-700">
-              Error uploading image (image size must be less than 2MB)
-            </span>
-          )}
-          {!fileUploadError && filePercentage > 0 && filePercentage < 100 && (
-            <span className="text-slate-700">{`Uploading ${filePercentage}%`}</span>
-          )}
-          {!fileUploadError && filePercentage === 100 && (
-            <span className="text-green-700">Successfully uploaded!</span>
-          )}
-        </p>
         <input
           type="text"
           placeholder="username"
