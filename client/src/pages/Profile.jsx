@@ -1,13 +1,7 @@
+// src/components/Profile.jsx
 import { useSelector } from "react-redux";
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  getStorage,
-} from "firebase/storage";
-import { app } from "../firebase";
 import {
   updateUserStart,
   updateUserFailure,
@@ -16,54 +10,85 @@ import {
   deleteUserFailure,
   deleteUserSuccess,
   signoutUserStart,
+  signoutUserFailure,
+  signoutUserSuccess,
 } from "../redux/User/userSlice";
 import { useDispatch } from "react-redux";
+import { uploadFile } from "@uploadthing/react";
 
 export default function Profile() {
   const fileRef = useRef(null);
-  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [userListings, setUserListings] = useState([]);
-  const [showListingsError, setShowListingsError] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (file) {
-      handleFileUpload(file);
-    }
-  }, [file]);
-
-  const handleFileUpload = (file) => {
-    const storage = getStorage(app);
-    const fileName = `${new Date().getTime()}_${file.name}`;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePercentage(Math.round(progress));
-      },
-      (error) => {
-        setFileUploadError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({
-            ...formData,
-            avatar: downloadURL,
-          });
-        });
-      }
-    );
+  const getAuthToken = () => {
+    return localStorage.getItem("authToken");
   };
 
+  useEffect(() => {
+    const uploadProfileImage = async () => {
+      if (!file) return;
+
+      try {
+        setFilePercentage(0);
+        setFileUploadError(false);
+
+        const uploadResult = await uploadFile(file, {
+          onProgress: (progress) => setFilePercentage(progress),
+        });
+
+        if (uploadResult.success) {
+          const uploadedUrl = uploadResult.fileUrl;
+          setFormData((prev) => ({ ...prev, avatar: uploadedUrl }));
+        } else {
+          throw new Error(uploadResult.message || "File upload failed");
+        }
+      } catch (error) {
+        setFileUploadError(true);
+        console.error("File upload error:", error.message);
+      }
+    };
+
+    uploadProfileImage();
+  }, [file]);
+
+  const handleFileUpload = async (file) => {
+    const token = getAuthToken();
+    if (!token) {
+      setFileUploadError(true);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/uploadthing/imageUploader", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFormData({
+          ...formData,
+          avatar: data.url, // Assuming the response contains the file URL
+        });
+      } else {
+        setFileUploadError(true);
+      }
+    } catch (error) {
+      setFileUploadError(true);
+    }
+  };
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -85,15 +110,10 @@ export default function Profile() {
 
       if (res.ok) {
         const data = await res.json();
-        if (data.success === false) {
-          dispatch(updateUserFailure(data.message));
-          return;
-        }
         dispatch(updateUserSuccess(data));
-        setUpdateSuccess(true);
       } else {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Update failed");
+        dispatch(updateUserFailure(errorData.message));
       }
     } catch (error) {
       dispatch(updateUserFailure(error.message));
@@ -182,16 +202,16 @@ export default function Profile() {
           alt="profile"
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
         />
-        <p className="text-center text-slate-700 text-self-center">
+        <p className="text-center text-slate-700">
           {fileUploadError && (
             <span className="text-red-700">
               Error uploading image (image size must be less than 2MB)
             </span>
           )}
-          {!fileUploadError && filePercentage > 0 && filePercentage < 100 && (
-            <span className="text-slate-700">{`Uploading ${filePercentage}%`}</span>
+          {filePercentage > 0 && filePercentage < 100 && (
+            <span className="text-slate-700">Uploading {filePercentage}%</span>
           )}
-          {!fileUploadError && filePercentage === 100 && (
+          {filePercentage === 100 && (
             <span className="text-green-700">Successfully uploaded!</span>
           )}
         </p>
@@ -232,65 +252,6 @@ export default function Profile() {
           Create Listing
         </Link>
       </form>
-      <div className="flex justify-between mt-5">
-        <span
-          onClick={handleDeleteUser}
-          className="text-red-700 cursor-pointer"
-        >
-          Delete account
-        </span>
-        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
-          Sign out
-        </span>
-      </div>
-      <p className="text-red-700 mt-5">{error ? error : ""}</p>
-      <p className="text-green-700 mt-5">
-        {updateSuccess ? "Profile updated successfully" : ""}
-      </p>
-      <button onClick={handleShowListings} className="text-green-700 w-full">
-        Show Listings
-      </button>
-      <p className="text-red-700 mt-5">
-        {showListingsError ? "Error loading listings" : ""}
-      </p>
-      {userListings && userListings.length > 0 && (
-        <div className="flex flex-col gap-4">
-          <h1 className="text-center mt-7 text-2xl font-semibold">
-            Your Listings
-          </h1>
-          {userListings.map((listing) => (
-            <div
-              key={listing._id}
-              className="border p-3 rounded-lg flex justify-between items-center gap-4"
-            >
-              <Link to={`/listing/${listing._id}`}>
-                <img
-                  src={listing.imageUrls[0]}
-                  alt="listing image"
-                  className="h-16 w-16 object-contain"
-                />
-              </Link>
-              <Link
-                to={`/delete-listing/${listing._id}`}
-                className="text-slate-700 font-semibold hover:underline truncate flex-1 "
-              >
-                <p>{listing.name}</p>
-              </Link>
-              <div className="flex flex-col items-center">
-                <button
-                  onClick={() => handleListingDelete(listing._id)}
-                  className="text-red-700 uppercase"
-                >
-                  Delete
-                </button>
-                <Link to={`/update-listing/${listing._id}`} className="text-blue-700">
-                  Update
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

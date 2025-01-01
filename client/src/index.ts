@@ -1,17 +1,24 @@
 // src/index.ts
 import express from "express";
 import { createRouteHandler } from "uploadthing/express";
-import { uploadRouter } from "./uploadthing";  // Import the upload router
+import { uploadRouter } from "./uploadthing"; // Import the upload router
 
 const app = express();
 
-// Middleware to handle file uploads
+// Middleware to handle profile picture uploads
 app.use(
-  "/api/uploadthing",
+  "/api/uploadthing/profile-picture",
   createRouteHandler({
     router: uploadRouter,
-    config: { /* Optional config like JWT secret or authentication */ },
-  }),
+  })
+);
+
+// Middleware to handle listing image uploads
+app.use(
+  "/api/uploadthing/listing-images",
+  createRouteHandler({
+    router: uploadRouter,
+  })
 );
 
 const PORT = process.env.PORT || 5000;
