@@ -27,6 +27,11 @@ export default function Profile() {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch();
 
+  const getAuthToken = () => {
+    // Retrieve the token from local storage, cookies, or Redux store
+    return localStorage.getItem("authToken");
+  };
+
   useEffect(() => {
     const uploadProfileImage = async () => {
       if (!file) return;
@@ -56,12 +61,21 @@ export default function Profile() {
   }, [file]);
 
   const handleFileUpload = async (file) => {
+    const token = getAuthToken();
+    if (!token) {
+      setFileUploadError(true);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const res = await fetch("/api/uploadthing/imageUploader", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -78,7 +92,6 @@ export default function Profile() {
       setFileUploadError(true);
     }
   };
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
