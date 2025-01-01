@@ -64,21 +64,12 @@ export default function Profile() {
   }, [file]);
 
   const handleFileUpload = async (file) => {
-    const token = getAuthToken();
-    if (!token) {
-      setFileUploadError(true);
-      return;
-    }
-
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const res = await fetch("/api/uploadthing/imageUploader", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formData,
       });
 
@@ -86,15 +77,17 @@ export default function Profile() {
         const data = await res.json();
         setFormData({
           ...formData,
-          avatar: data.url, // Assuming the response contains the file URL
+          avatar: data.url,
         });
       } else {
-        setFileUploadError(true);
+        throw new Error("Upload failed. Please try again.");
       }
     } catch (error) {
       setFileUploadError(true);
+      setErrorMessage("Network error. Please check your connection.");
     }
   };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
