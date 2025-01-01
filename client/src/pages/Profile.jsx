@@ -14,7 +14,6 @@ import {
   signoutUserSuccess,
 } from "../redux/User/userSlice";
 import { useDispatch } from "react-redux";
-import { UploadButton } from "@uploadthing/react";
 import { uploadFile } from "@uploadthing/react";
 
 export default function Profile() {
@@ -28,7 +27,6 @@ export default function Profile() {
   const dispatch = useDispatch();
 
   const getAuthToken = () => {
-    // Retrieve the token from local storage, cookies, or Redux store
     return localStorage.getItem("authToken");
   };
 
@@ -40,7 +38,6 @@ export default function Profile() {
         setFilePercentage(0);
         setFileUploadError(false);
 
-        // Use UploadThing client to upload the file
         const uploadResult = await uploadFile(file, {
           onProgress: (progress) => setFilePercentage(progress),
         });
