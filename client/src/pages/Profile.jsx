@@ -18,6 +18,7 @@ import { uploadFile } from "@uploadthing/react";
 
 export default function Profile() {
   const fileRef = useRef(null);
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
   const { currentUser, loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
@@ -30,32 +31,37 @@ export default function Profile() {
     return localStorage.getItem("authToken");
   };
 
-  useEffect(() => {
-    const uploadProfileImage = async () => {
-      if (!file) return;
+useEffect(() => {
+  const uploadProfileImage = async () => {
+    if (!file) return;
 
-      try {
-        setFilePercentage(0);
-        setFileUploadError(false);
+    if (file.size > MAX_FILE_SIZE) {
+      setFileUploadError(true);
+      return;
+    }
 
-        const uploadResult = await uploadFile(file, {
-          onProgress: (progress) => setFilePercentage(progress),
-        });
+    try {
+      setFilePercentage(0);
+      setFileUploadError(false);
 
-        if (uploadResult.success) {
-          const uploadedUrl = uploadResult.fileUrl;
-          setFormData((prev) => ({ ...prev, avatar: uploadedUrl }));
-        } else {
-          throw new Error(uploadResult.message || "File upload failed");
-        }
-      } catch (error) {
-        setFileUploadError(true);
-        console.error("File upload error:", error.message);
+      const uploadResult = await uploadFile(file, {
+        onProgress: (progress) => setFilePercentage(progress),
+      });
+
+      if (uploadResult.success) {
+        const uploadedUrl = uploadResult.fileUrl;
+        setFormData((prev) => ({ ...prev, avatar: uploadedUrl }));
+      } else {
+        throw new Error(uploadResult.message || "File upload failed");
       }
-    };
+    } catch (error) {
+      setFileUploadError(true);
+      console.error("File upload error:", error.message);
+    }
+  };
 
-    uploadProfileImage();
-  }, [file]);
+  uploadProfileImage();
+}, [file]);
 
   const handleFileUpload = async (file) => {
     const token = getAuthToken();
