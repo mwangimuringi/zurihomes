@@ -15,17 +15,16 @@ import {
 } from "../redux/User/userSlice";
 import { useDispatch } from "react-redux";
 import { UploadButton } from "@uploadthing/react";
+import { uploadFile } from "@uploadthing/react";
 
 export default function Profile() {
   const fileRef = useRef(null);
-  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
-  const [filePercentage, setFilePercentage] = useState(0); // Placeholder for future progress tracking
+  const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [userListings, setUserListings] = useState([]);
-  const [showListingsError, setShowListingsError] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
