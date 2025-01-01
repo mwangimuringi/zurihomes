@@ -28,10 +28,31 @@ export default function Profile() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (file) {
-      // Handle file upload
-      console.log("File selected:", file);
-    }
+    const uploadProfileImage = async () => {
+      if (!file) return;
+
+      try {
+        setFilePercentage(0);
+        setFileUploadError(false);
+
+        // Use UploadThing client to upload the file
+        const uploadResult = await uploadFile(file, {
+          onProgress: (progress) => setFilePercentage(progress),
+        });
+
+        if (uploadResult.success) {
+          const uploadedUrl = uploadResult.fileUrl;
+          setFormData((prev) => ({ ...prev, avatar: uploadedUrl }));
+        } else {
+          throw new Error(uploadResult.message || "File upload failed");
+        }
+      } catch (error) {
+        setFileUploadError(true);
+        console.error("File upload error:", error.message);
+      }
+    };
+
+    uploadProfileImage();
   }, [file]);
  
   const handleFileUpload = (file) => {
