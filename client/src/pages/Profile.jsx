@@ -18,6 +18,7 @@ import { uploadFile } from "@uploadthing/react";
 
 export default function Profile() {
   const fileRef = useRef(null);
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
   const { currentUser, loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
@@ -33,6 +34,11 @@ export default function Profile() {
   useEffect(() => {
     const uploadProfileImage = async () => {
       if (!file) return;
+
+      if (file.size > MAX_FILE_SIZE) {
+        setFileUploadError(true);
+        return;
+      }
 
       try {
         setFilePercentage(0);
@@ -58,21 +64,12 @@ export default function Profile() {
   }, [file]);
 
   const handleFileUpload = async (file) => {
-    const token = getAuthToken();
-    if (!token) {
-      setFileUploadError(true);
-      return;
-    }
-
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const res = await fetch("/api/uploadthing/imageUploader", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formData,
       });
 
@@ -80,15 +77,17 @@ export default function Profile() {
         const data = await res.json();
         setFormData({
           ...formData,
-          avatar: data.url, // Assuming the response contains the file URL
+          avatar: data.url,
         });
       } else {
-        setFileUploadError(true);
+        throw new Error("Upload failed. Please try again.");
       }
     } catch (error) {
       setFileUploadError(true);
+      setErrorMessage("Network error. Please check your connection.");
     }
   };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -196,12 +195,22 @@ export default function Profile() {
           hidden
           accept="image/*"
         />
-        <img
-          onClick={() => fileRef.current.click()}
-          src={formData?.avatar || currentUser.avatar}
-          alt="profile"
-          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-        />
+        <div className="relative">
+          {/* Display loading spinner if file is being uploaded */}
+          {filePercentage > 0 && filePercentage < 100 && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
+              <div className="spinner-border text-white" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
+            </div>
+          )}
+          <img
+            onClick={() => fileRef.current.click()}
+            src={formData?.avatar || currentUser.avatar}
+            alt="profile"
+            className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
+          />
+        </div>
         <p className="text-center text-slate-700">
           {fileUploadError && (
             <span className="text-red-700">
