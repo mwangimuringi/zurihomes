@@ -31,37 +31,37 @@ export default function Profile() {
     return localStorage.getItem("authToken");
   };
 
-useEffect(() => {
-  const uploadProfileImage = async () => {
-    if (!file) return;
+  useEffect(() => {
+    const uploadProfileImage = async () => {
+      if (!file) return;
 
-    if (file.size > MAX_FILE_SIZE) {
-      setFileUploadError(true);
-      return;
-    }
-
-    try {
-      setFilePercentage(0);
-      setFileUploadError(false);
-
-      const uploadResult = await uploadFile(file, {
-        onProgress: (progress) => setFilePercentage(progress),
-      });
-
-      if (uploadResult.success) {
-        const uploadedUrl = uploadResult.fileUrl;
-        setFormData((prev) => ({ ...prev, avatar: uploadedUrl }));
-      } else {
-        throw new Error(uploadResult.message || "File upload failed");
+      if (file.size > MAX_FILE_SIZE) {
+        setFileUploadError(true);
+        return;
       }
-    } catch (error) {
-      setFileUploadError(true);
-      console.error("File upload error:", error.message);
-    }
-  };
 
-  uploadProfileImage();
-}, [file]);
+      try {
+        setFilePercentage(0);
+        setFileUploadError(false);
+
+        const uploadResult = await uploadFile(file, {
+          onProgress: (progress) => setFilePercentage(progress),
+        });
+
+        if (uploadResult.success) {
+          const uploadedUrl = uploadResult.fileUrl;
+          setFormData((prev) => ({ ...prev, avatar: uploadedUrl }));
+        } else {
+          throw new Error(uploadResult.message || "File upload failed");
+        }
+      } catch (error) {
+        setFileUploadError(true);
+        console.error("File upload error:", error.message);
+      }
+    };
+
+    uploadProfileImage();
+  }, [file]);
 
   const handleFileUpload = async (file) => {
     const token = getAuthToken();
@@ -202,12 +202,22 @@ useEffect(() => {
           hidden
           accept="image/*"
         />
-        <img
-          onClick={() => fileRef.current.click()}
-          src={formData?.avatar || currentUser.avatar}
-          alt="profile"
-          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-        />
+        <div className="relative">
+          {/* Display loading spinner if file is being uploaded */}
+          {filePercentage > 0 && filePercentage < 100 && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
+              <div className="spinner-border text-white" role="status">
+                <span className="sr-only">Loading...</span>
+              </div>
+            </div>
+          )}
+          <img
+            onClick={() => fileRef.current.click()}
+            src={formData?.avatar || currentUser.avatar}
+            alt="profile"
+            className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
+          />
+        </div>
         <p className="text-center text-slate-700">
           {fileUploadError && (
             <span className="text-red-700">
