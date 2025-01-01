@@ -55,31 +55,28 @@ export default function Profile() {
     uploadProfileImage();
   }, [file]);
  
-  const handleFileUpload = (file) => {
-    const storage = getStorage(app);
-    const fileName = `${new Date().getTime()}_${file.name}`;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+ const handleFileUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePercentage(Math.round(progress));
-      },
-      (error) => {
-        setFileUploadError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({
-            ...formData,
-            avatar: downloadURL,
-          });
+    try {
+      const res = await fetch("/api/uploadthing/imageUploader", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFormData({
+          ...formData,
+          avatar: data.url, // Assuming the response contains the file URL
         });
+      } else {
+        setFileUploadError(true);
       }
-    );
+    } catch (error) {
+      setFileUploadError(true);
+    }
   };
 
   const handleChange = (e) => {
@@ -103,15 +100,10 @@ export default function Profile() {
 
       if (res.ok) {
         const data = await res.json();
-        if (data.success === false) {
-          dispatch(updateUserFailure(data.message));
-          return;
-        }
         dispatch(updateUserSuccess(data));
-        setUpdateSuccess(true);
       } else {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Update failed");
+        dispatch(updateUserFailure(errorData.message));
       }
     } catch (error) {
       dispatch(updateUserFailure(error.message));
