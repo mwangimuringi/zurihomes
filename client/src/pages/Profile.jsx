@@ -27,6 +27,13 @@ export default function Profile() {
   const [userListings, setUserListings] = useState([]);
   const [showListingsError, setShowListingsError] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (file) {
+      // Handle file upload
+      console.log("File selected:", file);
+    }
+  }, [file]);
  
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
