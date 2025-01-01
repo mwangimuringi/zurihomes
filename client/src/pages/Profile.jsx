@@ -19,18 +19,15 @@ import { UploadButton } from "@uploadthing/react";
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
+  const [file, setFile] = useState(undefined);
+  const [filePercentage, setFilePercentage] = useState(0); // Placeholder for future progress tracking
+  const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [userListings, setUserListings] = useState([]);
   const [showListingsError, setShowListingsError] = useState(false);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (file) {
-      handleFileUpload(file);
-    }
-  }, [file]);
-
+ 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
     const fileName = `${new Date().getTime()}_${file.name}`;
@@ -158,7 +155,7 @@ export default function Profile() {
       console.log(error.message); // Add more later
     }
   };
-  
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
