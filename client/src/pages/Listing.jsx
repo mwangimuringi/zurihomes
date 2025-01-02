@@ -47,7 +47,7 @@ export default function Listing() {
       }
     };
     fetchListings();
-  }, [params.listingId]);
+  }, [params.listingId, setListing, setError]); // Added setListing and setError to the dependencies
 
   return (
     <main>
@@ -56,7 +56,9 @@ export default function Listing() {
           <div className="border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"></div>
         </div>
       )}
-      {error && <p className="text-center my-7 text-2xl">{error}</p>}
+      {error && (
+        <p className="text-center my-7 text-2xl">{error}</p>
+      )}
       {listing && !loading && !error && (
         <>
           <Swiper navigation>
