@@ -48,7 +48,7 @@ export default function UpdateListing() {
   }, [params.listingId]);
 
   console.log(formData);
-  
+
   const handleImageSubmit = (e) => {
     const validFiles = Array.from(files).filter(
       (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024
@@ -338,14 +338,17 @@ export default function UpdateListing() {
           <p className="text-red-700 text-sm">
             {imageUploadError && imageUploadError}
           </p>
+          
           {formData.imageUrls.length > 0 &&
-            formData.imageUrls.map((url) => {
+            formData.imageUrls.map((url, index) => (
               <img
+                key={index}
                 src={url}
-                alt="listing image"
+                alt={`Listing ${index + 1}`}
                 className="w-40 h-40 object-cover rounded-lg"
-              />;
-            })}
+              />
+            ))}
+
           <button
             disabled={loading || uploading}
             className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
