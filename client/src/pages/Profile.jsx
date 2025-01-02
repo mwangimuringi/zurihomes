@@ -67,7 +67,7 @@ export default function Profile() {
       if (res.ok) {
         const data = await res.json();
         setFormData((prev) => ({ ...prev, avatar: data.url }));
-        setFilePercentage(100); // Indicate upload success
+        setFilePercentage(100);
       } else {
         throw new Error("Upload failed. Please try again.");
       }
@@ -169,7 +169,7 @@ export default function Profile() {
         prev.filter((listing) => listing._id !== listingId)
       );
     } catch (error) {
-      console.log(error.message); // Add more later
+      console.log(error.message); 
     }
   };
 
