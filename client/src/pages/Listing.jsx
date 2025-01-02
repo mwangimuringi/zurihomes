@@ -24,22 +24,25 @@ export default function Listing() {
   const [contact, setContact] = useState(false);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
+
   useEffect(() => {
     const fetchListings = async () => {
       try {
         setLoading(true);
         const response = await fetch(`/api/listings/get/${params.listingId}`);
         const data = await response.json();
-        if (data.success === false) {
-          setError(true);
+
+        if (!data.success) {
+          setError(data.message || "Error fetching listing.");
           setLoading(false);
           return;
         }
+
         setListing(data);
         setLoading(false);
         setError(false);
       } catch (error) {
-        setError(true);
+        setError(error.message || "Something went wrong!");
         setLoading(false);
       }
     };
