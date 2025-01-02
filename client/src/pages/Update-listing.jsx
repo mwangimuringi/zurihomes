@@ -38,35 +38,58 @@ export default function UpdateListing() {
       const listingId = params.listingId;
       const res = await fetch(`/api/listing/get/${listingId}`);
       const data = await res.json();
-      if (data.success === false) {
+      if (!data.success) {
         setError(data.message);
+      } else {
+        setFormData(data);
       }
-      setFormData(data);
     };
     fetchListing();
-  }, [id]);
+  }, [params.listingId]);
+
   console.log(formData);
+
   const handleImageSubmit = (e) => {
-    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
-      const promises = [];
-      for (let i = 0; i < files.length; i++) {
-        promises.push(storeimage(files[i]));
-      }
-      Promise.all(promises)
-        .then((urls) => {
-          setFormData({
-            ...formData,
-            imageUrls: formData.imageUrls.concat(urls),
-          });
-          setImageUploadError(false);
-        })
-        .catch((error) => {
-          setImageUploadError("Error uploading image (5 mb max per image)");
-        });
-    } else {
-      setImageUploadError("You can only upload 6 images per listing");
+    const validFiles = Array.from(files).filter(
+      (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024
+    );
+    if (validFiles.length + formData.imageUrls.length > 6) {
+      return setImageUploadError("You can only upload 6 images per listing");
     }
+
+    const promises = validFiles.map((file) => {
+      const uploadTask = storeimage(file); // assuming storeimage returns an upload task
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload is ${progress}% done`);
+            // Optionally, update state to show progress on UI
+            setUploadProgress(progress); // Assuming setUploadProgress is a state setter for progress
+          },
+          (error) => reject(error),
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
+          }
+        );
+      });
+    });
+
+    Promise.all(promises)
+      .then((urls) => {
+        setFormData((prev) => ({
+          ...prev,
+          imageUrls: [...prev.imageUrls, ...urls],
+        }));
+        setImageUploadError(false);
+      })
+      .catch(() => {
+        setImageUploadError("Error uploading images (5 MB max per image)");
+      });
   };
+
   const storeimage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -91,63 +114,42 @@ export default function UpdateListing() {
       );
     });
   };
+
   const handleChange = (e) => {
-    if (e.target.id === "sale" || e.target.id === "rent") {
-      setFormData({
-        ...formData,
-        type: e.target.id,
-      });
-    }
-    if (
-      e.target.id === "parking" ||
-      e.target.id === "furnished" ||
-      e.target.id === "offer"
-    ) {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.checked,
-      });
-    }
-    if (
-      e.target.id === "number" ||
-      e.target.id === "text" ||
-      e.target.id === "textarea"
-    ) {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
-      });
-    }
+    const { id, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: type === "checkbox" ? checked : value,
+    }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      //conditional validation
-      if (formData.imageUrls.length < 1)
-        return setError("You must upload atleast 1 image");
-      //convert to Number
-      if (+formData.regular_price < +formData.discounted_price)
-        return setError("Discounted price must be less than regular price");
+      if (formData.imageUrls.length < 1) {
+        return setError("At least one image is required.");
+      }
+      if (+formData.regular_price < +formData.discounted_price) {
+        return setError("Discounted price must be less than regular price.");
+      }
+
       setLoading(true);
       setError(false);
       const res = await fetch(`/api/listing/update/${params.listingId}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          useRef: currentUser._id,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, userId: currentUser._id }),
       });
+
       const data = await res.json();
-      setLoading(false);
-      if (data.success === false) {
+      if (!data.success) {
         setError(data.message);
+      } else {
+        navigate(`/listing/${data._id}`);
       }
-      navigate(`/listing/${data._id}`);
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
       setLoading(false);
     }
   };
@@ -271,15 +273,15 @@ export default function UpdateListing() {
               <input
                 type="number"
                 id="regular_price"
-                min="Ksh 1000"
-                max="Ksh 1000,000"
+                min="1000"
+                max="1000000"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
                 onChange={handleChange}
                 value={formData.regular_price}
               />
               <div className="flex flex-col items-center">
-                <p>Regular price</p>
+                <label htmlFor="regular_price">Regular Price</label>
                 {formData.type === "rent" && (
                   <span className="text-xs"> (Ksh / month)</span>
                 )}
@@ -334,19 +336,23 @@ export default function UpdateListing() {
           <p className="text-red-700 text-sm">
             {imageUploadError && imageUploadError}
           </p>
+
           {formData.imageUrls.length > 0 &&
-            formData.imageUrls.map((url) => {
+            formData.imageUrls.map((url, index) => (
               <img
+                key={index}
                 src={url}
-                alt="listing image"
+                alt={`Listing ${index + 1}`}
                 className="w-40 h-40 object-cover rounded-lg"
-              />;
-            })}
+              />
+            ))}
           <button
             disabled={loading || uploading}
-            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+            className={`p-3 ${
+              loading ? "bg-gray-500" : "bg-slate-700"
+            } text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80`}
           >
-            {loading ? "Creating..." : "Update Listing"}
+            {loading ? "Updating..." : "Update Listing"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}
         </div>
