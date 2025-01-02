@@ -169,7 +169,7 @@ export default function Profile() {
         prev.filter((listing) => listing._id !== listingId)
       );
     } catch (error) {
-      console.log(error.message); 
+      console.log(error.message);
     }
   };
 
@@ -250,6 +250,60 @@ export default function Profile() {
           Create Listing
         </Link>
       </form>
+
+      {/* New Section for Additional Actions */}
+      <div className="flex flex-col gap-4 mt-6">
+        <button
+          onClick={handleDeleteUser}
+          className="bg-red-700 text-white rounded-lg p-3 uppercase hover:opacity-95"
+        >
+          Delete Account
+        </button>
+        <button
+          onClick={handleSignOut}
+          className="bg-blue-700 text-white rounded-lg p-3 uppercase hover:opacity-95"
+        >
+          Sign Out
+        </button>
+        <button
+          onClick={handleShowListings}
+          className="bg-green-700 text-white rounded-lg p-3 uppercase hover:opacity-95"
+        >
+          Show Listings
+        </button>
+
+        {/* Display User Listings */}
+        {userListings?.length > 0 && (
+          <div className="mt-4">
+            <h2 className="text-2xl font-semibold text-center mb-4">
+              Your Listings
+            </h2>
+            <ul className="space-y-4">
+              {userListings.map((listing) => (
+                <li
+                  key={listing._id}
+                  className="flex justify-between items-center border p-3 rounded-lg"
+                >
+                  <span>{listing.name}</span>
+                  <button
+                    onClick={() => handleListingDelete(listing._id)}
+                    className="bg-red-700 text-white rounded-lg p-2 hover:opacity-95"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Error Message for Listings */}
+        {showListingsError && (
+          <p className="text-red-700 text-center">
+            Error loading your listings. Please try again.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
