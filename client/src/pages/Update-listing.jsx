@@ -262,7 +262,7 @@ export default function UpdateListing() {
                 value={formData.regular_price}
               />
               <div className="flex flex-col items-center">
-              <label htmlFor="regular_price">Regular Price</label>
+                <label htmlFor="regular_price">Regular Price</label>
                 {formData.type === "rent" && (
                   <span className="text-xs"> (Ksh / month)</span>
                 )}
@@ -327,12 +327,13 @@ export default function UpdateListing() {
                 className="w-40 h-40 object-cover rounded-lg"
               />
             ))}
-
           <button
             disabled={loading || uploading}
-            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+            className={`p-3 ${
+              loading ? "bg-gray-500" : "bg-slate-700"
+            } text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80`}
           >
-            {loading ? "Creating..." : "Update Listing"}
+            {loading ? "Updating..." : "Update Listing"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}
         </div>
