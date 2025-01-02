@@ -107,32 +107,30 @@ export default function UpdateListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      //conditional validation
-      if (formData.imageUrls.length < 1)
-        return setError("You must upload atleast 1 image");
-      //convert to Number
-      if (+formData.regular_price < +formData.discounted_price)
-        return setError("Discounted price must be less than regular price");
+      if (formData.imageUrls.length < 1) {
+        return setError("At least one image is required.");
+      }
+      if (+formData.regular_price < +formData.discounted_price) {
+        return setError("Discounted price must be less than regular price.");
+      }
+
       setLoading(true);
       setError(false);
       const res = await fetch(`/api/listing/update/${params.listingId}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          useRef: currentUser._id,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, userId: currentUser._id }),
       });
+
       const data = await res.json();
-      setLoading(false);
-      if (data.success === false) {
+      if (!data.success) {
         setError(data.message);
+      } else {
+        navigate(`/listing/${data._id}`);
       }
-      navigate(`/listing/${data._id}`);
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
       setLoading(false);
     }
   };
