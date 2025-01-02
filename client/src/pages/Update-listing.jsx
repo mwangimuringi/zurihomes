@@ -95,34 +95,15 @@ export default function UpdateListing() {
       );
     });
   };
+
   const handleChange = (e) => {
-    if (e.target.id === "sale" || e.target.id === "rent") {
-      setFormData({
-        ...formData,
-        type: e.target.id,
-      });
-    }
-    if (
-      e.target.id === "parking" ||
-      e.target.id === "furnished" ||
-      e.target.id === "offer"
-    ) {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.checked,
-      });
-    }
-    if (
-      e.target.id === "number" ||
-      e.target.id === "text" ||
-      e.target.id === "textarea"
-    ) {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
-      });
-    }
+    const { id, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: type === "checkbox" ? checked : value,
+    }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -338,7 +319,7 @@ export default function UpdateListing() {
           <p className="text-red-700 text-sm">
             {imageUploadError && imageUploadError}
           </p>
-          
+
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
               <img
