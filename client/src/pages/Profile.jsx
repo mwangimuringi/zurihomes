@@ -34,40 +34,40 @@ export default function Profile() {
   useEffect(() => {
     const uploadProfileImage = async () => {
       if (!file) return;
-  
+
       if (file.size > MAX_FILE_SIZE) {
         setFileUploadError(true);
         return;
       }
-  
+
       try {
         setFilePercentage(0);
         setFileUploadError(false);
-  
-        await handleFileUpload(file); 
+
+        await handleFileUpload(file);
       } catch (error) {
         setFileUploadError(true);
         console.error("File upload error:", error.message);
       }
     };
-  
+
     uploadProfileImage();
   }, [file]);
-  
 
   const handleFileUpload = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-  
+
     try {
       const res = await fetch("/api/uploadthing/imageUploader", {
         method: "POST",
         body: formData,
       });
-  
+
       if (res.ok) {
         const data = await res.json();
         setFormData((prev) => ({ ...prev, avatar: data.url }));
+        setFilePercentage(100); // Indicate upload success
       } else {
         throw new Error("Upload failed. Please try again.");
       }
@@ -76,7 +76,7 @@ export default function Profile() {
       console.error("File upload error:", error.message);
     }
   };
-  
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
