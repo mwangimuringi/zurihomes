@@ -51,10 +51,12 @@ export default function Listing() {
 
   return (
     <main>
-      {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
-      {error && (
-        <p className="text-center my-7 text-2xl">Something went wrong!</p>
+      {loading && (
+        <div className="flex justify-center items-center my-7">
+          <div className="border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"></div>
+        </div>
       )}
+      {error && <p className="text-center my-7 text-2xl">{error}</p>}
       {listing && !loading && !error && (
         <>
           <Swiper navigation>
