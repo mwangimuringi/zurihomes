@@ -254,15 +254,15 @@ export default function UpdateListing() {
               <input
                 type="number"
                 id="regular_price"
-                min="Ksh 1000"
-                max="Ksh 1000,000"
+                min="1000"
+                max="1000000"
                 required
                 className="border p-3 border-gray-300 rounded-lg"
                 onChange={handleChange}
                 value={formData.regular_price}
               />
               <div className="flex flex-col items-center">
-                <p>Regular price</p>
+              <label htmlFor="regular_price">Regular Price</label>
                 {formData.type === "rent" && (
                   <span className="text-xs"> (Ksh / month)</span>
                 )}
