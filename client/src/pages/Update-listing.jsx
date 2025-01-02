@@ -57,7 +57,26 @@ export default function UpdateListing() {
       return setImageUploadError("You can only upload 6 images per listing");
     }
 
-    const promises = validFiles.map((file) => storeimage(file));
+    const promises = validFiles.map((file) => {
+      const uploadTask = storeimage(file); // assuming storeimage returns an upload task
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload is ${progress}% done`);
+            // Optionally, update state to show progress on UI
+            setUploadProgress(progress); // Assuming setUploadProgress is a state setter for progress
+          },
+          (error) => reject(error),
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
+          }
+        );
+      });
+    });
+
     Promise.all(promises)
       .then((urls) => {
         setFormData((prev) => ({
