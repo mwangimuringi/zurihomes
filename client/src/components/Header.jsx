@@ -1,4 +1,3 @@
-import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";

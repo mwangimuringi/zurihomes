@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function About() {
   return (
     <div>
@@ -51,8 +49,8 @@ export default function About() {
         </h2>
         <div className="bg-white shadow p-6 rounded-md">
           <p className="italic text-gray-700">
-            "ZuriHomes made it so easy for us to find our dream home! The team
-            was professional and supportive every step of the way."
+            &quot;ZuriHomes made it so easy for us to find our dream home! The team
+            was professional and supportive every step of the way.&quot;
           </p>
           <h4
             className="mt-4 text-right font-bold text-gray-900"
@@ -97,7 +95,7 @@ export default function About() {
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Contact Us</h2>
         <div className="bg-white shadow p-6 rounded-md">
           <p className="text-gray-700 text-lg mb-4">
-            We’d love to hear from you! Reach out to us via email or phone for
+            We&rsquo;d love to hear from you! Reach out to us via email or phone for
             any inquiries.
           </p>
           <p className="text-gray-700 mb-2">
