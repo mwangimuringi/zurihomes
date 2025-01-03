@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 export default function Contact({ listing }) {
   const [landlord, setLandlord] = useState(null);
@@ -20,6 +21,7 @@ export default function Contact({ listing }) {
     };
     fetchLandlord();
   }, [listing.userRef]);
+
   return (
     <>
       {landlord && (
@@ -40,8 +42,8 @@ export default function Contact({ listing }) {
           ></textarea>
 
           <Link
-          to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
-          className='bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95'
+            to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
+            className='bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95'
           >
             Send Message          
           </Link>
@@ -50,3 +52,10 @@ export default function Contact({ listing }) {
     </>
   );
 }
+
+Contact.propTypes = {
+  listing: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    userRef: PropTypes.string.isRequired,
+  }).isRequired,
+};
