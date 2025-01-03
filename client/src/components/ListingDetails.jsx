@@ -1,4 +1,5 @@
 import { FaBath, FaBed, FaChair, FaMapMarkerAlt, FaParking } from "react-icons/fa";
+import PropTypes from 'prop-types';
 import Contact from "./Contact";
 
 export default function ListingDetails({ listing, currentUser, contact, setContact }) {
@@ -63,3 +64,25 @@ export default function ListingDetails({ listing, currentUser, contact, setConta
     </div>
   );
 }
+
+ListingDetails.propTypes = {
+  listing: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    offer: PropTypes.bool,
+    discountPrice: PropTypes.number,
+    regularPrice: PropTypes.number.isRequired,
+    type: PropTypes.oneOf(['rent', 'sale']).isRequired,
+    address: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    bedrooms: PropTypes.number.isRequired,
+    bathrooms: PropTypes.number.isRequired,
+    parking: PropTypes.bool.isRequired,
+    furnished: PropTypes.bool.isRequired,
+    userRef: PropTypes.string.isRequired,
+  }).isRequired,
+  currentUser: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+  }),
+  contact: PropTypes.bool.isRequired,
+  setContact: PropTypes.func.isRequired,
+};
