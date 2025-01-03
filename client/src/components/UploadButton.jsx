@@ -1,5 +1,4 @@
-// src/components/UploadButton.jsx
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL, getStorage } from "firebase/storage";
 import { app } from "../firebase";
 
@@ -22,7 +21,7 @@ export const UploadButton = ({ onUploadSuccess, onUploadError }) => {
       },
       (error) => {
         setFileUploadError(true);
-        onUploadError();
+        onUploadError(error);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
