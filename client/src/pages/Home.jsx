@@ -1,4 +1,3 @@
-import React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,7 +9,7 @@ import ListingItem from "../components/ListingItem";
 export default function Home() {
   const [offerListings, setOfferListings] = useState([]);
   const [saleListings, setSaleListings] = useState([]);
-  const [rentListings, setRentListings] = useState([]);
+  const [rentListings] = useState([]);
   SwiperCore.use([Navigation]);
   useEffect(() => {
     const fetchOfferListings = async () => {
