@@ -1,0 +1,49 @@
+<template>
+    <!-- <form ref="formProperty" id="form_add_property"> -->
+        <div class="row mt-3">
+            <fieldset>
+                <div class="col-12">
+                    <label for="Currenthomeaddress">Current Home Address (Where you live now) <br/></label>
+                        <input type="number" name="Currentstreet" class="form-control mb-20" placeholder="Street Number" required/>
+                        <input type="text" name="Currentstreetname" class="form-control mb-20" placeholder="Street Name" required/>
+                </div>
+               
+                
+                
+                <div class="col-12">        
+                    <label for="country">Country:</label>
+                        <select name="CurrentCountry" id="dropdown" @change="getStatesCities" v-model="pro.country">
+                            <option value=""></option>
+                            <option v-for="(c,i) in optCountries" v-bind:key="i" v-bind:value="i">{{c}}</option>
+                        </select>
+                </div>
+                
+                <div class="col-12">        
+                    <label for="Currentprovince">State/Province:</label>
+                        <select name="Currentstateprovince" id="dropdown" v-model="pro.states" @change="getCities">
+                            <option value="001">Select</option>
+                            <option v-for="(c) in optStates" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                        </select>
+                </div>
+                
+                <div class="col-12">
+                    <label for="dropdown">City:</label>
+                    <select name="Currentcity" id="dropdown" v-model="pro.city>
+                        <option value=""></option>
+                        <option v-for="c in optCities" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                    </select>
+                </div>
+                
+                <div class="col-12">                    
+                    <label for="number">Phone #:</label>
+                        <input type="tel" name="Currentphoneno" placeholder="Enter a valid number" id="phone_number" required/>
+                </div>
+                
+                <div class="col-12">       
+                    <label for="number">Cell #:</label>
+                        <input type="cellnumber" name="Currentcellnumber" id="number" />   
+                </div>
+            </fieldset>
+        </div>
+    <!-- </form> -->
+</template>

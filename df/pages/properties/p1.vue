@@ -1,0 +1,751 @@
+<script>
+import {required,email,minLength,sameAs,maxLength,minValue,maxValue,numeric,alphaNum,} from 'vuelidate/lib/validators'
+import {FormWizard,TabContent,WizardButton } from "vue-form-wizard";
+import Swal from "sweetalert2";
+import vue2Dropzone from "vue2-dropzone";
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import {country_and_states} from "../../helpers/app.countries";
+import "vue-form-wizard/dist/vue-form-wizard.min.css";
+// import { directive } from '@coders-tm/vue-number-format'
+/**
+ * Product-create component
+ */
+export default {
+    head() {
+        return {
+            title: `${this.title} | `+process.env.appName,
+        };
+    },
+    components: {
+        FormWizard,
+        TabContent,
+        WizardButton,
+        vueDropzone: vue2Dropzone,
+        ckeditor: CKEditor.component,
+    },
+    data() {
+        return {
+            title: "Create Property",
+            items: [{
+                    text: "WA",
+                },
+                {
+                    text: "Properties",
+                },
+                {
+                    text: "Create Property",
+                    active: true,
+                },
+            ],
+            optCountries:country_and_states.country,
+            optCities:[],
+            optStates:[],
+            property:{
+                name:"",
+                property_id:0,
+                landlord_id:0,
+                country:null,
+                city:null,
+                states:null,
+                bathrooms:0,
+                rental_property_parking:"",
+                description:"",
+                built_size:1,
+                bedrooms_qt:1,
+                bathrooms_qt:1,
+                floors_qt:1,
+                category:1,
+                price:1,
+                // comments:"",
+                amenities:[],
+                availability:1,
+                status:1,
+                is_public:0,
+                contract_term:1,
+                geolocation_map:null
+            },
+            center: { lat: 58.90, lng: -112.3 },
+            map_options: {scrollwheel:true},
+            map_markers:[{position:{lat: 58.90,lng: -112.3}}],
+            map_marker_lo:{position:{lat: 58.90,lng: -112.3}},
+            frmGeneral:{
+                name:"",
+                country:"",
+                city:0,
+                states:1,
+                bathrooms:1,
+                rental_property_parking:"",
+                description:"",
+                built_size:1,
+                bedrooms_qt:1,
+                bathrooms_qt:1,
+                floors_qt:1,
+                category:1,
+                price:1,
+                availability:1,
+            },
+            // amenities_list:[
+            //     {id:1,name:"Bathrooms Ensuite"},
+            //     {id:2,name:"Bathrooms Full"},
+            //     {id:3,name:"Bathrooms 1/2"},
+            //     {id:4,name:"Fridge"},
+            //     {id:5,name:"Stove"},
+            //     {id:6,name:"Microwave"},
+            //     {id:7,name:"Freezer"},
+            //     {id:8,name:"Washer"},
+            //     {id:9,name:"Drier"},
+            //     {id:10,name:"Furnished"},
+            //     {id:11,name:"Car park"},
+            //     {id:12,name:"Patio/Deck"},
+            //     {id:13,name:"Pool"},
+            //     {id:14,name:"Sauna"},
+            //     {id:15,name:"Maids Quarters"},
+            //     {id:16,name:"Air conditioning"}
+                
+            // ],
+            // availability_list:[
+            //     {id:1,name:"Available"},
+            //     {id:2,name:"Occupied"},
+            // ],
+            // categories_list:[
+            //     {id:1,name:"Apartments"},
+            //     {id:2,name:"House"},
+            //     {id:3,name:"Studio"},
+            //     {id:4,name:"Penthouse"},
+            // ],
+            // status_list:[
+            //     {id:1,name:"Enabled"},
+            //     {id:0,name:"Disabled"},
+            // ],
+            // yesnot_list:[
+            //     {id:1,name:"Yes"},
+            //     {id:0,name:"No"},
+            // ],
+            // contractterm_list:[
+            //     {id:1,name:"Short-term"},
+            //     {id:2,name:"Long-term"},
+            // ],
+            loadingWizard:false,
+            editor: ClassicEditor,
+            editorData: "<p>Content of the editor.</p>",
+            dropzoneOptions: {
+                // url: process.env.apiBaseUrl+"/photos/photo-upload/"+this.property.property_id,
+                url: "https://api.watenantbureau.com/api/photos/photo-upload/",
+                
+              thumbnailWidth: 150,
+                uploadMultiple: true,
+                parallelUploads: 100,
+                maxFiles: 100,
+                maxFilesize:200,//MB
+                autoProcessQueue:false,
+                // maxFilesize: 0.5,
+//withCredentials:true,                
+//headers: {
+//             "Content-Type": "multipart/form-data",
+//                   'Cache-Control': null,
+  //                  'X-Requested-With': null,
+               //      'Access-Control-Allow-Origin': '*',
+    //                "Content-Type": "text/html",
+      //         Authorization: `Bearer ${this.$auth.user.user_uid}`,
+
+//},
+                previewTemplate: this.template(),
+            },
+            formGeneral:false,
+            formInfo:false,
+            formComplete:false
+        };
+    },
+    validations: {
+        property:{
+            name: {required,minLength: minLength(5)},
+            country: {required},
+            city: {required},
+            states: {required},
+            description: {required,minLength: minLength(1)},
+            built_size: {required},
+            bedrooms_qt: {required,minValue:1,maxValue: 40},
+            bathrooms_qt: {required,minValue:1,maxValue: 40},
+            floors_qt: {required},
+            year_built: {required},
+            category: {required},
+            price: {required},
+            // comments
+            availability: {required},
+            status: {required},
+            is_public: {required},
+            contract_term: {required},
+            geolocation_map: {required},
+        }
+    },
+    // directives: {number: directive,},
+    methods: {
+
+ handleSending(file, xhr, formData) {
+    console.log('Uploading file:', file);
+  },
+  handleError(file, errorMessage, xhr) {
+    console.error('Error uploading file:', file, errorMessage);
+  },
+  handleSuccess(file, response) {
+    console.log('File uploaded successfully:', file, response);
+  },
+
+        template: function () {
+            return ` <div class="dropzone-previews mt-3">
+            <div class="card mt-1 mb-0 shadow-none border">
+                <div class="p-2">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                        </div>
+                        <div class="col pl-0">
+                            <a href="javascript:void(0);" class="text-muted font-weight-bold" data-dz-name></a>
+                            <p class="mb-0" data-dz-size></p>
+                        </div>
+                        <div class="col-auto">
+                            <!-- Button -->
+                            <a href="" class="btn btn-link btn-lg text-muted" data-dz-remove>
+                                <i class="fe-x"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        },
+
+        isLastStep() {
+            if (this.$refs.wizard) {
+                return this.$refs.wizard.isLastStep;
+            }
+            return false;
+        },
+        geolocate: function() {
+            
+            if(this.property.geolocation_map == undefined || this.property.geolocation_map == null){
+                navigator.geolocation.getCurrentPosition(position => {
+                    this.center = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    };
+                    this.map_markers[0]={
+                        position:{
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        }
+                    };
+                    this.map_marker_lo.position = { lat: position.coords.latitude, lng: position.coords.longitude };
+                });
+            }else{
+                const getPosition = this.property.geolocation_map.split(',');
+                this.center = {lat: Number(getPosition[0]),lng: Number(getPosition[1])};
+                this.map_markers[0]={
+                    position:{
+                        lat: Number(getPosition[0]),
+                        lng: Number(getPosition[1])
+                    }
+                };
+            }
+        },
+        handleMarkerDrag(e) {
+            this.map_marker_lo.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+        },
+        // onValidateFormGeneral:function(p,n){
+        //     console.log('debug 00',p)
+        //     console.log('debug 00',n)
+        //     const checkFields =['name', 'description', 'country','states','city','built_size','bedrooms_qt','bathrooms_qt','floors_qt','category','price'];
+        //     this.$v.$touch();
+        //     console.log('debug 001',this.$v)
+        //     this.formGeneral = true
+        //     for (const key in checkFields) {
+        //         if (checkFields.hasOwnProperty.call(checkFields, key)) {
+        //             const element = checkFields[key];
+        //             if (this.$v.property[element].$invalid === true){ 
+        //                 console.log('err');
+        //                 return false;
+        //             }
+        //         }
+        //     }
+        // },
+        // onValidateFormInfo(e){
+        //     console.log('debug 001',e)
+        //     const checkFields =['availability', 'status', 'is_public','contract_term'];
+        //     this.$v.$touch();
+            
+        //     this.formGeneral = true
+        //     for (const key in checkFields) {
+        //         if (checkFields.hasOwnProperty.call(checkFields, key)) {
+        //             const element = checkFields[key];
+        //             if (this.$v.property[element].$invalid === true){ 
+        //                 console.log('err');
+        //                 return false;
+        //             }
+        //         }
+        //     }
+        // },
+        setLoading: function(value) {
+            this.loadingWizard = value
+        },
+        handleValidation: function(isValid, tabIndex){
+            console.log('Tab: '+tabIndex+ ' valid: '+isValid)
+        },
+        validateAsync:function() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const checkFields =['name', 'description', 'country','states','city','built_size','bedrooms_qt','bathrooms_qt','floors_qt','category','price'];
+                    this.$v.$touch();
+                    let isValid =true;
+                    this.formGeneral = true
+                    for (const key in checkFields) {
+                        if (checkFields.hasOwnProperty.call(checkFields, key)) {
+                            const element = checkFields[key];
+                            if (this.$v.property[element].$invalid === true){ 
+                                isValid =false;
+                                reject('This is a custom validation error message. Click next again to get rid of the validation');
+                            }
+                        }
+                    }
+                    if(isValid == true) {
+                        resolve(true);
+                    }
+                }, 2000)
+            })
+        },
+        validateInfoAsync:function() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const checkFields =['availability', 'status', 'is_public','contract_term'];
+                    this.$v.$touch();
+                    let isValid =true;
+                    this.formInfo = true
+                    for (const key in checkFields) {
+                        if (checkFields.hasOwnProperty.call(checkFields, key)) {
+                            const element = checkFields[key];
+                            if (this.$v.property[element].$invalid === true){ 
+                                isValid =false;
+                                reject('This is a custom validation error message. Click next again to get rid of the validation');
+                            }
+                        }
+                    }
+                    if(isValid == true) {
+                        resolve(true);
+                    }
+                }, 2000)
+            })
+        },
+        validatePhotoAsync:function() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const checkFields =['availability', 'status', 'is_public','contract_term'];
+                    this.$v.$touch();
+                    let isValid =true;
+                    const photoQT = this.$refs.photosUploader.dropzone.files.length;
+console.log("Pressed Next in photo upload section");                   
+ if( photoQT < 0){
+                        isValid =false;
+                        reject('This is a custom validation error message. Click next again to get rid of the validation');
+                    }
+                    if(isValid == true) {
+                        resolve(true);
+                    }
+                }, 2000)
+            })
+        },
+        onCompleteForm(){
+            this.property.landlord_id=this.$auth.user.user_login_id;
+            this.formPostSubmit();
+        },
+        async getStatesCities(){
+            // console.log(this.company);
+            let response = await this.$axios.$get('/bo/states/'+this.property.country);
+            this.optStates=response.data;
+        },
+        async getCities(){
+            let response = await this.$axios.$get('/bo/cities/'+this.property.states);
+            this.optCities=response.data;
+        },
+        formPostSubmit(){
+            let formData = this.property;
+                // formData.built_size=formData.built_size.replace('sqm','');
+                // formData.price=formData.price.replace('$','');
+            // let formData = this._handleFormGetData('form_user_add');
+                
+            Swal.fire({
+                title: "Are you sure?",
+                text: "If you want to add an property, press [Yes, continue]!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, continue",
+                cancelButtonText: "Cancel!",
+                confirmButtonClass: "btn btn-success mt-2",
+                cancelButtonClass: "btn btn-danger ml-2 mt-2",
+            }).then((result) => {
+                if (result.value) {
+                    this.createNewRecordDT(formData); 
+                } 
+            });
+        },
+        async createNewRecordDT(form_data) {
+            let response = await this.$axios.$post('/properties/create/',form_data);
+
+//              this.$refs.photosUploader.setOption("url", "https://api.watenanbureau.com/photos/photo-upload/"+response.property_id+"/1",{headers:{'Content-Type':'multipart/form-data'}});
+
+            if(response.status=='ok'){
+
+				
+              this.$refs.photosUploader.setOption("url", "https://api.watenantbureau.com/api/photos/photo-upload/"+response.property_id+"/1"),
+            //console.log("Server's CORS headers:", response.headers['access-control-allow-origin']);
+
+        console.log("Dropzone URL:", "https://api.watenantbureau.com/api/photos/photo-upload");
+
+
+                // this.dropzoneOptions.url=this.dropzoneOptions.url+response.property_id;
+
+
+        //this.$refs.photosUploader.setOption("withCredentials", true);
+                this.$refs.photosUploader.processQueue();
+                
+this.$toast.success('New Record Added!',{duration:2000,fitToScreen:true});
+          //       this.closeForm();
+            }else{
+                this.$toast.error(response.message,{duration:2000,fitToScreen:true});
+            }
+            //this.company = response.data;
+        },
+        onCompletedUpload: function(response){
+            if(response.status == 'success'){
+                this.$router.push('/properties');
+            }
+        },
+        onModalAccept(){
+            // this.property.geolocation_map=`${this.map_marker_lo.position.lat},${this.map_marker_lo.position.lng}`;
+            this.property.geolocation_map=`${parseFloat(this.map_marker_lo.position.lat).toFixed(4)},${parseFloat(this.map_marker_lo.position.lng).toFixed(4)}`;
+        }
+    },
+//    middleware: "auth",
+};
+</script>
+
+<template>
+<div>
+    <PageHeader :title="title" :items="items" />
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <b-modal id="modal-1" @ok="onModalAccept" title="Find Location" title-class="font-18" modal-class="md-modal-sel-map">
+                    <h5>Coordenates</h5>
+                    <p>Latitude: {{ map_marker_lo.position.lat }}, longitude: {{ map_marker_lo.position.lng }}</p>
+                    <hr>
+                    <h5>Moves the pointer where the property is located</h5>
+                    <div>
+                        <GmapMap :center="center" :options="map_options" :zoom="10" style="height: 300px">
+                             <GmapMarker
+                                :key="index"
+                                v-for="(m, index) in map_markers"
+                                :position="m.position"
+                                @click="center=m.position"
+                                :clickable="true"
+                                :draggable="true"
+                                @drag="handleMarkerDrag"
+                            />
+                        </GmapMap>
+                    </div>
+                </b-modal>
+                <div class="card-body">
+                    <form-wizard color="#3bafda" ref="wizard" @on-complete="onCompleteForm" 
+                        @on-loading="setLoading"
+                        @on-validate="handleValidation"
+                        >
+                         <tab-content title="General" :before-change="validateAsync">
+                            <h4 class="header-title">General Information</h4>
+                            <p class="sub-header">Fill all information below</p>
+                            <form ref="formProperty" id="form_add_property">
+                                <div>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="form-group mb-3">
+                                                <label for="product-name">Name<span class="text-danger">*</span></label>
+                                                <input type="text" id="product-name" v-model="property.name"  class="form-control" 
+                                                    :class="{ 'is-invalid': formGeneral && ($v.property.name.$error || $v.property.name.$invalid) }" 
+                                                    placeholder="Name o Title" />
+                                                <div v-if="formGeneral && $v.property.name.$error" class="invalid-feedback">
+                                                    <span v-if="!$v.property.name.required">This value is required.</span>
+                                                    <span v-if="!$v.property.name.minLength">Password must be at least 6 characters.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <div class="form-group mb-3">
+                                                <label for="product-name" class="text-primary" v-b-modal.modal-1 @click="geolocate"  >Coordenates(click)<span class="text-danger">*</span></label>
+                                                <input type="text" id="product-name" v-model="property.geolocation_map"  class="form-control" 
+                                                    :class="{ 'is-invalid': formGeneral && ($v.property.geolocation_map.$error || $v.property.geolocation_map.$invalid) }" 
+                                                    placeholder="Get Coordenates " />
+                                                <div v-if="formGeneral && $v.property.name.$error" class="invalid-feedback">
+                                                    <span v-if="!$v.property.geolocation_map.required">This value is required.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label for="user_firstname">Country</label>
+                                                        <select class="form-control" v-model="property.country" name="rental_property_country" @change="getStatesCities"
+                                                            :class="{ 'is-invalid': formGeneral && ($v.property.country.$error || $v.property.country.$invalid) }" 
+                                                        >
+                                                            <option>Select</option>
+                                                            <option v-for="(c,i) in optCountries" v-bind:key="i" v-bind:value="i">{{c}}</option>
+                                                        </select>
+                                                        <div v-if="formGeneral && $v.property.country.$error" class="invalid-feedback">
+                                                            <span v-if="!$v.property.country.required">This value is required.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label for="user_lastname">State</label>
+                                                        <select name="rental_property_state" class="form-control" v-model="property.states"  @change="getCities"
+                                                            :class="{ 'is-invalid': formGeneral && ($v.property.states.$error || $v.property.states.$invalid) }" 
+                                                        >
+                                                            <option>Select</option>
+                                                            <option v-for="c in optStates" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                                                        </select>
+                                                        <div v-if="formGeneral && $v.property.states.$error" class="invalid-feedback">
+                                                            <span v-if="!$v.property.states.required">This value is required.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label for="user_lastname">City</label>
+                                                        <select name="rental_property_city" class="form-control" v-model="property.city"
+                                                            :class="{ 'is-invalid': formGeneral && ($v.property.city.$error || $v.property.city.$invalid) }" 
+                                                        >
+                                                            <option>Select</option>
+                                                            <option v-for="c in optCities" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                                                        </select>
+                                                        <div v-if="formGeneral && $v.property.city.$error" class="invalid-feedback">
+                                                            <span v-if="!$v.property.city.required">This value is required.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="product-description">Description<span class="text-danger">*</span>
+                                        </label>
+                                        <!-- <ckeditor 
+                                            name="rental_property_description" v-model="property.description" :editor="editor"
+                                            :class="{ 'is-invalid': formGeneral && ($v.property.description.$error || $v.property.description.$invalid) }"
+                                        ></ckeditor> -->
+                                        <textarea v-model="property.description" class="form-control" rows="5" id="rental_property_description" placeholder="Please enter description"
+                                        :class="{ 'is-invalid': formGeneral && ($v.property.description.$error || $v.property.description.$invalid) }"
+                                        ></textarea>
+                                        <div v-if="formGeneral && $v.property.description.$error" class="invalid-feedback">
+                                            <span v-if="!$v.property.description.required">This value is required.</span>
+                                            <span v-if="!$v.property.description.minLength">This value is too short. It should have 6 characters or more.</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <div class="form-group mb-3">
+                                                        <label for="built_size">SQM of Property<span class="text-danger">*</span></label>
+                                                        <!-- <input type="text" class="form-control" v-number="app_vnumber_format.sqm_number" id="built_size" placeholder="Enter amount"  v-model.lazy="property.built_size" :class="{ 'is-invalid': formGeneral && ($v.property.built_size.$error || $v.property.built_size.$invalid) }" /> -->
+                                                        <input type="text" class="form-control"  id="built_size" placeholder="Enter amount"  v-model.lazy="property.built_size" :class="{ 'is-invalid': formGeneral && ($v.property.built_size.$error || $v.property.built_size.$invalid) }" />
+                                                        <div v-if="formGeneral && $v.property.built_size.$error" class="invalid-feedback">
+                                                            <span v-if="!$v.property.built_size.required">This value is required.</span>
+                                                            <span v-if="!$v.property.built_size.minValue">This value should be between 10 and 99,999,999.</span>
+                                                            <span v-if="!$v.property.built_size.maxValue">This value should be between 10 and 99,999,999.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="form-group mb-3">
+                                                        <label for="bedrooms_qt">Bedrooms<span class="text-danger">*</span></label>
+                                                        <!-- <input type="text"  v-number="app_vnumber_format.number_int" class="form-control" id="bedrooms_qt" name="bedrooms_qt" placeholder="Enter amount" v-model.lazy="property.bedrooms_qt" :class="{ 'is-invalid': formGeneral && ($v.property.bedrooms_qt.$error || $v.property.bedrooms_qt.$invalid) }" /> -->
+                                                        <input type="text"  class="form-control" id="bedrooms_qt" name="bedrooms_qt" placeholder="Enter amount" v-model.lazy="property.bedrooms_qt" :class="{ 'is-invalid': formGeneral && ($v.property.bedrooms_qt.$error || $v.property.bedrooms_qt.$invalid) }" />
+                                                        <div v-if="formGeneral && $v.property.bedrooms_qt.$error" class="invalid-feedback">
+                                                            <span v-if="!$v.property.bedrooms_qt.required">This value is required.</span>
+                                                            <span v-if="!$v.property.bedrooms_qt.minValue">This value should be between 10 and 99,999,999.</span>
+                                                            <span v-if="!$v.property.bedrooms_qt.maxValue">This value should be between 10 and 99,999,999.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="form-group mb-3">
+                                                        <label for="bathrooms_qt">Bathrooms<span class="text-danger">*</span></label>
+                                                        <!-- <input type="text" min="1" max="100" class="form-control" v-number="app_vnumber_format.number_int" id="bathrooms_qt" name="bathrooms_qt" placeholder="Enter amount" v-model.lazy="property.bathrooms_qt" :class="{ 'is-invalid': formGeneral && ($v.property.bathrooms_qt.$error || $v.property.bathrooms_qt.$invalid) }" /> -->
+                                                        <input type="text" min="1" max="100" class="form-control" id="bathrooms_qt" name="bathrooms_qt" placeholder="Enter amount" v-model.lazy="property.bathrooms_qt" :class="{ 'is-invalid': formGeneral && ($v.property.bathrooms_qt.$error || $v.property.bathrooms_qt.$invalid) }" />
+                                                        <div v-if="formGeneral && $v.property.bathrooms_qt.$error" class="invalid-feedback">
+                                                            <span v-if="!$v.property.bathrooms_qt.required">This value is required.</span>
+                                                            <span v-if="!$v.property.bathrooms_qt.minValue">This value should be between 10 and 99,999,999.</span>
+                                                            <span v-if="!$v.property.bathrooms_qt.maxValue">This value should be between 10 and 99,999,999.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="form-group mb-3">
+                                                        <label for="floors_qt">Floors<span class="text-danger">*</span></label>
+                                                        <input type="text" min="1" max="100" class="form-control"  id="floors_qt" name="floors_qt" placeholder="Enter amount" v-model.lazy="property.floors_qt"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <div class="form-group mb-3">
+                                                        <label for="year_built">Year built<span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control"  id="year_built" name="year_built" placeholder="Year built" v-model.lazy="property.year_built"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group mb-3">
+                                                        <label for="product-category">Category<span class="text-danger">*</span></label>
+                                                        <select class="form-control select2" id="product-category" v-model="property.category">
+                                                            <option>Select</option>
+                                                            <option v-for="c in app_categories_list" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group mb-3">
+                                                        <label for="product-price">Price<span class="text-danger">*</span></label>
+                                                        <!-- <input type="text" v-number="app_vnumber_format.money"  class="form-control" id="product-price" placeholder="Enter price amount" v-model.lazy="property.price" /> -->
+                                                        <input type="text" class="form-control" id="product-price" placeholder="Enter price amount" v-model.lazy="property.price" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-lg-12"><h4>Amenities</h4></div>
+                                        <div class="col-lg-4" v-for="item,index in app_amenities_list" :key="index">
+                                            <b-form-checkbox 
+                                            :id="`amenities_list-${item.id}`"  
+                                            :value="item.id"
+                                            v-model="property.amenities"
+                                            unchecked-value="not_accepted">{{item.name}}</b-form-checkbox>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <ul class="pager wizard mb-0 list-inline text-right mt-3">
+                                <li class="next list-inline-item"></li>
+                            </ul>
+                        </tab-content>
+
+                                     <tab-content title="Other Information"
+                            :before-change="validateInfoAsync"
+                            >
+                            <h4 class="header-title">Other Information</h4>
+                            <p class="sub-header">Fill all information below</p>
+
+                            <form ref="formInfo">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group mb-3">
+                                            <label for="user_lastname">Availability</label>
+                                            <select name="property_availability" class="form-control" v-model="property.availability" 
+                                                :class="{ 'is-invalid': formInfo && ($v.property.availability.$error || $v.property.availability.$invalid) }"     
+                                            >   
+                                                <option>Select</option>
+                                                <option v-for="c in app_availability_list" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                                            </select>
+                                            <div v-if="formInfo && $v.property.availability.$error" class="invalid-feedback">
+                                                <span v-if="!$v.property.availability.required">This value is required.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group mb-3">
+                                            <label for="product-meta-title">Status</label>
+                                            <select name="property_status" class="form-control" v-model="property.status" 
+                                                :class="{ 'is-invalid': formInfo && ($v.property.status.$error || $v.property.status.$invalid) }"         
+                                            >
+                                                <option>Select</option>
+                                                <option v-for="c in app_status_list" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                                            </select>
+                                            <div v-if="formInfo && $v.property.status.$error" class="invalid-feedback">
+                                                <span v-if="!$v.property.status.required">This value is required.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group mb-3">
+                                            <label for="product-meta-keywords">Public(online)</label>
+                                            <select name="property_is_public" class="form-control" v-model="property.is_public" 
+                                                :class="{ 'is-invalid': formInfo && ($v.property.is_public.$error || $v.property.is_public.$invalid) }"  
+                                            >
+                                                <option>Select</option>
+                                                <option v-for="c in app_yesnot_list" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                                            </select>  
+                                            <div v-if="formInfo && $v.property.is_public.$error" class="invalid-feedback">
+                                                <span v-if="!$v.property.is_public.required">This value is required.</span>
+                                            </div>      
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group mb-0">
+                                            <label for="product-meta-description">Contract term</label>
+                                            <select name="property_contract_term" class="form-control" v-model="property.contract_term" 
+                                                :class="{ 'is-invalid': formInfo && ($v.property.contract_term.$error || $v.property.contract_term.$invalid) }" >
+                                                <option>Select</option>
+                                                <option v-for="c in app_contractterm_list" v-bind:key="c.id" v-bind:value="c.id">{{c.name}}</option>
+                                            </select>
+                                            <div v-if="formInfo && $v.property.contract_term.$error" class="invalid-feedback">
+                                                <span v-if="!$v.property.contract_term.required">This value is required.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                               
+                            </form>
+                        </tab-content>
+
+
+   <tab-content title="Property Photos" :before-change="validatePhotoAsync">
+                <h4 class="header-title">Property Photos</h4>
+                <p class="sub-header">Upload Photos</p>
+
+                <vue-dropzone id="dropzone"
+                              ref="photosUploader"
+                              @vdropzone-file-added="handleFileAdded"
+                              v-on:vdropzone-sending="handleSending"
+                              v-on:vdropzone-error="handleError"
+                              v-on:vdropzone-success="handleSuccess"
+
+
+                              v-on:vdropzone-complete="onCompletedUpload"
+                              :use-custom-slot="true"
+                              :options="dropzoneOptions">
+                  <div class="dz-message needsclick">
+                    <i class="h1 text-muted ri-upload-cloud-2-line"></i>
+                    <h3>Drop files here or click to upload.</h3>
+                    <span class="text-muted font-13">
+                                        (Upload photos for the property. Selected files are
+                                        <strong>not</strong> actually uploaded.)
+                                    </span>
+                  </div>
+                </vue-dropzone>
+              </tab-content>
+
+                        <div class="loader" v-if="loadingWizard"></div>
+                    </form-wizard>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</template>

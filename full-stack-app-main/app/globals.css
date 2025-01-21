@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 19% 16%;
+      --card: 0 0% 100%;
+      --card-foreground: 240 19% 16%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 20 14.3% 4.1%;
+      --primary: 8 99% 67%;
+      --primary-foreground: 300 0% 100%;
+      --secondary: 240 19% 16%;
+      --secondary-foreground: 300 0% 100%;
+      --tertiary: 27 82% 98%
+      --muted: 60 4.8% 95.9%;
+      --muted-foreground: 237 13% 40%;
+      --accent: 237 9% 96%;
+      --accent-foreground: 24 9.8% 10%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 60 9.1% 97.8%;
+      --border: 8 82% 92%;
+      --input: 8 82% 92%;
+      --ring: 9 99% 67%;
+      --radius: 0.5rem;
+    }
+
+    .dark {
+      --background: 237 22% 20%;
+      --foreground: 60 9.1% 97.8%;
+      --card: 240 19% 16%;
+      --card-foreground: 300 0% 100%;
+      --popover: 20 14.3% 4.1%;
+      --popover-foreground: 60 9.1% 97.8%;
+      --primary: 8 99% 67%;
+      --primary-foreground: 300 0% 100%;
+      --secondary: 240 19% 16%;
+      --secondary-foreground: 300 0% 100%;
+      --tertiary: 27 82% 98%
+      --muted: 12 6.5% 15.1%;
+      --muted-foreground: 237 13% 63%;
+      --accent: 240 19% 16%;
+      --accent-foreground: 300 0% 100%;
+      --destructive: 0 72.2% 50.6%;
+      --destructive-foreground: 60 9.1% 97.8%;
+      --border: 237 22% 23%;
+      --input: 237 22% 23%;
+      --ring: 8 99% 67%;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.h1 {
+  @apply text-6xl xl:text-[72px] xl:leading-[80px] tracking-[-2px] font-bold;
+}
+
+.h2 {
+  @apply text-4xl font-bold;
+}
+
+.h3 {
+  @apply text-3xl font-bold;
+}
+
+.h4 {
+  @apply text-[22px] font-semibold;
+}
+
+.subtitle {
+  @apply text-muted-foreground text-lg mb-8 font-light;
+}
+
+.badge {
+  @apply flex items-center z-10 w-[200px] h-[68px] bg-white dark:backdrop-blur-[44px] shadow-2xl p-4 
+  rounded-[10px]  gap-x-4;
+}
+
+.section-title {
+  @apply text-4xl font-semibold relative w-max flex items-center justify-between gap-x-3 
+  before:bg-dots_light before:dark:bg-dots_dark before:bg-no-repeat before:bg-center before:w-[24px] before:h-[24px];
+}
+
+/* swiper bullets styles */
+.swiper-horizontal > .section-pagination-bullets .swiper-pagination-bullet,
+.swiper-pagination-horizontal.swiper-pagination-bullet .swiper-pagination-bullet {
+  @apply bg-primary;
+}

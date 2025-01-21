@@ -1,0 +1,258 @@
+<script>
+    import {required,email,minLength,sameAs,maxLength,minValue,maxValue,numeric,alphaNum,} from 'vuelidate/lib/validators';
+    import Swal from "sweetalert2";
+    import vue2Dropzone from "vue2-dropzone";
+    // import CKEditor from "@ckeditor/ckeditor5-vue";
+    // import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+    import {country_and_states} from "../../helpers/app.countries";
+    // import "vue-form-wizard/dist/vue-form-wizard.min.css";
+
+    import UIFormAU from "./ui-forms/form-about-you.vue";
+   import UIFormAddreses from "./ui-forms/form-address.vue";
+    import UIFormAddresesPrev from "./ui-forms/form-address-p.vue";
+    import UIFormEmployeer from "./ui-forms/form-employeer.vue";
+    // import UIFormCredit from "./ui-forms/form-credit.vue";
+    // import UIFormCriminal from "./ui-forms/form-criminal.vue";
+    import UIFormSpouse from "./ui-forms/form-spouse.vue";
+    import UIFormOccupants from "./ui-forms/form-occupants.vue";
+   // import UIFormVehicle from "./ui-forms/form-vehicle.vue";
+    import UIFormEmergency from "./ui-forms/form-emergency.vue";
+    import UIFormAuthorization from "./ui-forms/form-authorization.vue";
+    // import UIFormDisclosure from "./ui-forms/form-disclosure.vue";
+    // import { directive } from '@coders-tm/vue-number-format'
+    /**
+     * Product-create component
+     */
+    export default {
+        head() {
+            return {
+                title: `${this.title} | `+ process.env.appName,
+            };
+        },
+        components: {
+            UIFormAU,
+UIFormAddreses,
+UIFormAddresesPrev,
+UIFormEmployeer,
+
+            UIFormSpouse,
+            UIFormOccupants,
+            UIFormEmergency,
+            UIFormAuthorization,
+            
+        },
+        data() {
+            return {
+                title: "Rental Application",
+                items: [{
+                        text: "WA",
+                    },
+                    {
+                        text: "Tenants",
+                    },
+                    {
+                        text: "Rental Application",
+                        active: true,
+                    },
+                ],
+                optCountries:country_and_states.country,
+                optCities:[],
+                optStates:[],	
+                optCities2:[],
+                optStates2:[],
+                form_tabs_all:"active",
+                form_tabs_stat:[
+                    {id:2,label:"About you",status:"active",stat_label:""},
+                    {id:3,label:"Address",status:"active",stat_label:""},
+                    {id:4,label:"Previous Address",status:"active",stat_label:""},
+                    {id:5,label:"Employeer",status:"active",stat_label:""},
+                    {id:6,label:"Your Spouse",status:"active",stat_label:""},
+                    {id:7,label:"Occupants",status:"active",stat_label:""},
+                    {id:8,label:"Emergency",status:"active",stat_label:""},
+                    {id:9,label:"Authorization",status:"active",stat_label:""},
+                 //   {id:10,label:"Emergency",status:"active",stat_label:""},
+                   // {id:11,label:"Authorization",status:"active",stat_label:""},
+                     //{id:12,label:"DISCLOSURE",status:"active",stat_label:""},
+                ],
+properties:{
+		
+
+
+
+
+
+},
+        }        
+        },
+        
+      layout: 'auth-wl',
+        methods: {
+            
+            onClickTab: function(e){
+                
+                this.form_tabs_all='';
+                this.form_tabs_stat.forEach((thisEle,id) => {
+                    this.form_tabs_stat[id].status='';
+                    this.form_tabs_stat[id].stat_label='';
+                    if(thisEle.id == e){
+                        this.form_tabs_stat[id].status='active';
+                    this.form_tabs_stat[id].stat_label='active';
+                    }
+                });
+            },
+            onClickTabAll: function(){
+                
+                this.form_tabs_all='active';
+                this.form_tabs_stat.forEach((thisEle,id) => {
+                    this.form_tabs_stat[id].status='active';
+                    this.form_tabs_stat[id].stat_label='';
+                    
+                });
+            },
+            
+           
+            //
+            async getStatesCities(){
+            //     // console.log(this.company);
+             let response = await this.$axios.$get('/bo/states/'+this.property.country);
+             this.optStates=response.data;
+             },
+             async getCities(){
+                let response = await this.$axios.$get('/bo/cities/'+this.property.states);
+                this.optCities=response.data;
+             },
+            // async getStatesList(e){
+            //     this.optStates=await this.appGetStatesList(e);
+            // },
+            // async getCitiesList(e){
+            //     this.optCities=await this.appGetCitiesList(e);
+            // },
+            // async getStatesList2(e){
+            //     this.optStates2=await this.appGetStatesList(e);
+            // },
+            // async getCitiesList2(e){
+            //     this.optCities2=await this.appGetCitiesList(e);
+            // },
+            // async appGetStatesList(e){
+            //     let response = await this.$axios.$get('/bo/states/'+e);
+            //     return response.data;
+            // },
+            // async appGetCitiesList(e){
+            //     let response = await this.$axios.$get('/bo/cities/'+e);
+            //     return response.data;
+            // },
+             formPostSubmit(){
+           ///let formData=this.property;     
+         let formData = this._handleFormGetData('form_user_add');
+                this.createNewRecordDT(formData);    
+     
+             },
+             async createNewRecordDT(form_data) {
+	try{
+		console.log('Form Data:', form_data);
+                 let response = await this.$axios.$post('/user/rental-application',form_data);
+		        console.log('API Response:', response);                
+ if(response.status=='ok'){
+           
+                    
+                      this.$toast.success('Rental Application Sent!',{duration:2000,fitToScreen:true});
+                     }else{
+                     this.$toast.error(response.message,{duration:2000,fitToScreen:true});
+                 }
+}catch(error){
+ console.error('Error submitting rental application:', error);
+    this.$toast.error('An error occurred while submitting the application.', { duration: 2000, fitToScreen: true });
+}
+
+	            
+             },
+      
+         //middleware: "auth",
+}   
+ }
+</script>
+
+<template>
+<div>
+    <!-- <PageHeader :title="title" :items="items" /> -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                
+                <div class="card-body no-padding">
+                    <div class="text-center w-75 m-auto">
+                        <div class="auth-logo">
+                            <nuxt-link to="/" class="logo logo-dark text-center">
+                                <span class="logo-lg">
+                                    <img src="~/assets/images/logo_wa.png" alt="" height="140">
+                                </span>
+                            </nuxt-link>
+
+                            <nuxt-link to="/" class="logo logo-light text-center">
+                                <span class="logo-lg">
+                                    <img src="~/assets/images/logo_wa.png" alt="" height="140">
+                                </span>
+                            </nuxt-link>
+                        </div>
+                        <h1>Rental Application</h1>
+                        <p class="text-muted mb-4">Please, you must fill in all the fields about the company.</p>
+                    </div>
+                    <form class="form-input-control" id="form_user_add">
+                      
+<div class="form-tabs-title">
+  
+                            <div class="item-tabs-title" @click="onClickTabAll" :class="{'active': form_tabs_all=='active'}">All</div>
+                            <div v-for="item in form_tabs_stat" :key="item.id" @click="onClickTab(item.id)" class="item-tabs-title"
+                            :class="{'active': item.stat_label=='active'}"
+                            >{{item.label}}</div>
+                        </div>
+                        <div class="form-tabs-container">
+                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[0].status=='active'}">
+				<UIFormAU></UIFormAU>			
+</div>                        
+                                <div class="form-tabs-content" :class="{'active' : form_tabs_stat[1].status=='active'}">
+                              <UIFormAddreses></UIFormAddreses>
+</div>
+                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[2].status=='active'}">
+                                <UIFormAddresesPrev></UIFormAddresesPrev>
+                            </div>
+                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[3].status=='active'}">
+                                <UIFormEmployeer></UIFormEmployeer>
+                           </div>
+<!--                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[4].status=='active'}">
+                                <UIForm></UIForm>
+                            </div> -->
+                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[4].status=='active'}">
+                                <UIFormSpouse></UIFormSpouse>
+                            </div>
+                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[5].status=='active'}">
+                                <UIFormOccupants></UIFormOccupants>
+                            </div>
+                         <!--   <div class="form-tabs-content" :class="{'active': form_tabs_stat[6].status=='active'}">
+                                <UIFormVehicle></UIFormVehicle>
+                            </div>-->
+                            
+                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[6].status=='active'}">
+                                <UIFormEmergency></UIFormEmergency>
+                            </div>
+                            
+                            <div class="form-tabs-content" :class="{'active': form_tabs_stat[7].status=='active'}">
+                                <UIFormAuthorization></UIFormAuthorization>
+                            </div>
+                            
+                            <!-- <div class="form-tabs-content" :class="{'active': form_tabs_stat[10].status=='active'}">
+                                <UIFormDisclosure></UIFormDisclosure>
+                            </div> -->
+                        </div>
+                    </form>
+                    <div class="col-12 mb-3 mt-3 text-center">
+                        <!-- <p>By submitting the document I the above named as Tenant 1, state that the information is true and correct to the best of my knowledge. I understand that this record will be recorded in my file with WA Tenant Bureau. My IP Address is recorded as my electronic signature.</p> -->
+                        <button class="btn btn-primary btn-block" type="button" @click="formPostSubmit" >Submit Information</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</template>

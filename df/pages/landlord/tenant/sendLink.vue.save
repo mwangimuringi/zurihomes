@@ -1,0 +1,19 @@
+<template>
+
+                    <form class="form-input-control" id="send_link">
+
+  <div id="example text" role="group" class="form-row form-group">
+                                    <label id="" for="text" class="col-sm-2 col-lg-2 col-form-label">Email / Username</label>
+                                    <div class="bv-no-focus-ring col">
+                                        <input type="text" class="form-control" for="text" name="send_link_user" id="send_link_user">
+                                    </div>
+                                </div>
+</form>
+
+      <footer id="create-alert-modal___BV_modal_footer_" class="modal-footer">
+                        <button type="button" class="btn btn-soft-secondary" @click="closeForm">Cancelar</button>
+                        <button type="button" class="btn btn-outline-primary width-xl" @click="formPostSubmit">Add</button>
+                    </footer>
+
+</template>
+<script>

@@ -1,0 +1,228 @@
+<script>
+export default {
+	head() {
+		return {
+			title:'Tenant Report | ' +process.env.appName,
+			};
+		},
+	async asyncData({
+		params
+		}) {
+			return params.id;
+		     },
+		data() {
+			return {
+title: "Tenant Report",
+items:[{
+text : "WA"
+},
+{
+text : "Tenants"
+},
+{
+	text: "Tenant report",
+active: true
+}
+],
+isLoaded:false,
+searchBy:"",
+searchDateTime:"",
+tenantIdReg:null,
+tenantRA:false,
+tenantRADT:null,
+tenantMainDT:null,
+tenantHistory:null,
+tenantSearchedLogs:[],
+tenantReportIdReg:this.$route.params.id,
+};
+},
+computed: {
+     
+},
+methods:{
+
+async asyncDataTenantReport() {
+let response=await this.$axios.$post("/tenants/search-ti/"+this.tenantReportIdReg,{});
+if(response.status=='ok')
+{
+this.tenantMainDT=response.data[0];
+this.tenantHistory=response.data;
+this.tenantSearchedLogs=response.tenant_search_logs;
+
+
+if(response.rental_application.status=='ok'){
+
+	this.tenantRA=true;
+	this.tenantRADT=response.rental_application.data;
+this.searchBy=response.landlord_name;
+this.tenantSearchedLogs=response.tenant_search_logs;
+this.searchDateTime=response.date_created;
+this.tenantIdReg=response.rental_application.data.tenant_idreg;
+}
+this.isLoaded=true;
+}
+},
+convertPaidontime(value){
+return {
+text:value === 1 ? 'Yes' : 'No',
+class: value === 1 ? 'text-success' : 'text-danger',
+};
+},
+formatDate(dateString)
+{
+if(dateString)
+{
+const dateObject=new Date(dateString);
+const day=dateObject.getDate();
+const month=dateObject.getMonth()+1;
+const year=dateObject.getFullYear();
+
+      return `${day < 10 ? '0' : ''}${day}-${month < 10 ? '0' : ''}${month}-${year}`;}
+return '';
+},
+
+
+
+},
+mounted(){
+this.asyncDataTenantReport();
+},
+components: {
+
+},
+created() {
+
+},
+layout: 'auth-wl',
+};
+</script>
+
+
+
+
+<template>
+
+<div>
+<div v-if="isLoaded" class="row">
+<div class="col-12">
+<div class="card card-tenant-report bg-wa-tenant-report">
+<div class="card-body">
+<div class="row mb-4">
+<div class="col-12 mb-2"><h3 class="text-center title-tenant-report">Tenant Report</h3></div>
+<div class="col-12"><h5 class="text-right">Tenant ID# {{ tenantMainDT.id_reg }}</h5>
+</div>
+</div>
+
+
+
+  <div v-if="tenantRA == false" class="row">
+                        <div class="col-4"><b>Tenant Name</b>: {{ tenantMainDT.inputTenantslastname+' '+tenantMainDT.inputTenantsfirstname+' '+tenantMainDT.inputTenantsmiddlename }}</div>
+                        <div class="col-4"><b>DOB:</b> {{ formatDate(tenantMainDT.TENANTdob) }}</div>
+                        <div class="col-12"><b>Present Address:</b> {{ tenantMainDT.inputTenantaddress +', '+ tenantMainDT.city_name+', '+ tenantMainDT.states_name+', '+ tenantMainDT.country_name }} </div>
+                        <div class="col-12"><b>Tenants Identification Used: </b> (Type): (Number) If more then one ID has been linked to this tenant then all ID info will be shown</div>
+                        <div class="col-12"><b>Phone#:</b> {{ tenantMainDT.TENANTcellnumber }} <span v-if="tenantMainDT.TENANTcellnumber.length < 1">(no phone inputed)</span></div>
+                        <div class="col-12"><b>Email:</b> {{ tenantMainDT.TENANTemail }} <span v-if="tenantMainDT.TENANTemail.length < 1">(no email inputed)</span></div>
+<div v-if="tenantMainDT.inputTenantslastname_2 !== ''")
+                         <div class="col-6 mt-2"><b>Spouse:</b> {{ tenantMainDT.inputTenantslastname_2+' '+tenantMainDT.inputTenantsmiddlename_2+' '+tenantMainDT.inputTenantsfirstname_2 }}</div>
+                        <div class="col-6 mt-2"><b>DOB:</b> {{formatDate(tenantMainDT.TENANTdob)}}</div>
+<div v-else></div>
+<div class="col-6 mt-2"><b> Move-in Date: </b> {{formatDate(tenantMainDT.Moveindate)}}</div>
+<div class="col-6 mt-2"><b> Move-out Date: </b> {{formatDate(tenantMainDT.Moveoutdate)}}</div>
+<div class="col-6 mt-2"><b>Tenant paid rent on time?</b> <span v-if="tenantMainDT.PaidonTime == 1">Yes</span><span v-else style="color:red">No</span></div>
+<div class="col-6 mt-2"><b>Tenant left property clean</b> <span v-if="tenantMainDT.Propertyclean == 1">Yes</span><span v-else style="color:red">No</span></div>
+<div class="col-6 mt-2"><b>Tenant gave proper move-out notice?</b> <span v-if="tenantMainDT.Propernotice == 1">Yes</span><span v-else style="color:red">No</span></div>
+<div class="col-6 mt-2"><b>Recommend Tenant?</b> <span v-if="tenantMainDT.Recommenttenant == 1">Yes</span><span v-else style="color:red">No</span></div>
+<div class="col-6 mt-2"><b>Dirty Yard?</b> <span v-if="tenantMainDT.Dirtyyard == 1" style="color:red">Yes</span><span v-else>No</span></div>
+<div class="col-6 mt-2"><b>Dirty house?</b> <span v-if="tenantMainDT.Dirtyhouse == 1" style="color:red">Yes</span><span v-else>No</span></div>
+
+
+ <div class="col-6 mt-2"><b>Damages to the Yard?</b> <span v-if="tenantMainDT.Yarddamages == 1" style="color:red">Yes</span><span v-else>No</span> </div>
+                      <div v-if="tenantMainDT.Yarddamages == 1" class="col-6 mt-2" ><b>Price?</b> {{tenantMainDT.inputDamagestoyard}}</div>
+
+                      <div class="col-6 mt-2"><b>Damages to the House ?</b> <span v-if="tenantMainDT.Housedamages == 1" style="color:red">Yes</span><span v-else>No</span> </div>
+                      <div v-if="tenantMainDT.Housedamages == 1" class="col-6 mt-2" ><b>Price?</b> {{tenantMainDT.inputDamagestohouse}}</div>
+
+                      <div class="col-6 mt-2"><b>Back Rent Owed?</b> <span v-if="tenantMainDT.Backrent == 1" style="color:red">Yes</span><span v-else>No</span> </div>
+                      <div v-if="tenantMainDT.Backrent == 1" class="col-6 mt-2" ><b>Price?</b> {{tenantMainDT.inputBackrent}}</div>
+
+                      <div class="col-6 mt-2"><b>Court Filing?</b> <span v-if="tenantMainDT.Courtfiling == 1" style="color:red">Yes</span><span v-else>No</span> </div>
+                      <div v-if="tenantMainDT.Courtfiling == 1" class="col-6 mt-2" ><b>Price?</b> {{tenantMainDT.inputCourtfiling}}</div>
+ 
+
+
+                   
+
+
+</div>
+
+
+  <div class="row mt-4">
+                        <div class="col-12">
+                            <h3 class="text-center"> Existing Matches from Tenant Searches </h3>
+                            <!-- <h5 class="text-center">Searched By {{ searchBy }} - ID# {{ tenantIdReg }} | {{ this._app_format_datetime_AP(searchDateTime) }}</h5> -->
+                        </div>
+                        <div class="col-12">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                                                                <th>Reg. Date</th>
+                                        <th>Landlord</th>
+                                        <th>ID# Landlord</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item,index in tenantSearchedLogs" :key="index">
+                                        
+
+                                        <td>{{ _app_format_datetime_AP(item.date_created)}}</td>
+                                        <td>{{item.landlord_name}}</td>
+                                        <td>{{item.landlord_idreg}}</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+</div>
+</div>
+</div>
+</div>
+<div v-else>
+  <div class="row mt-4">
+                        <div class="col-12">
+                            <h3 class="text-center"> Previous Searches </h3>
+                            <!-- <h5 class="text-center">Searched By {{ searchBy }} - ID# {{ tenantIdReg }} | {{ this._app_format_datetime_AP(searchDateTime) }}</h5> -->
+                        </div>
+                        <div class="col-12">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Reg. Date</th>
+                                        <th>Landlord</th>
+                                        <th>ID# Landlord</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item,index in tenantSearchedLogs" :key="index">
+                                        <th scope="row">{{index}}</th>
+
+                                        <td>{{ _app_format_datetime_AP(item.date_created)}}</td>
+                                        <td>{{item.landlord_name}}</td>
+                                        <td>{{item.landlord_idreg}}</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+ <h5 style="text-align:center; color:red;">Here is the good news,
+ there is NO match in our database. This could be due to the applicant's
+ landlord not being a member or the tenant has not caused any issue, so the landlord has no reason to input their name.</h5>
+            
+</div>
+</template>

@@ -1,0 +1,48 @@
+
+<template>
+
+
+</template>
+<style>
+
+<div class="cards">
+    <div class="card card1">
+      <h2 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 30px;">BRONZE</h2>
+      <hr class="yellow-line">
+<br>
+      <h3 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 18px;">1 Tenant Search</h3>
+      <br>
+      <h3 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 18px;">Unlimited Free Rental</h3>
+      <br>
+      <h3 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 18px;">Free input of tenants rentals history from your landlord</h3>
+      <h1 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 35px;">$23.99</h1>
+
+      
+    </div>
+    <div class="card card2">
+      <h2 style="font-family: 'gl', sans-serif; font-size: 30px; src: url('fonts/gl.otf');">PLATINUM</h2>
+      <hr class="yellow-line">
+
+      <h3>UPTO 4 SEARCHES PER MONTH</h3>
+      <br>
+      <h3>FREE TENANT APPLICATION</h3>
+      <br>
+      <h3>FREE STANDARD PROVISON/STATE LEASE AGREEMENT AUTO FILL(COMING SOON)</h3>
+      <br>
+      <h3>FREE INPUT OF TENANT RENTAL HISTORY FROM YOU AS THE LANDLOARDS</h3>
+      <h1>$75</h1>
+    </div>
+    <div class="card card3">
+      <h2>GOLD</h2>
+      <hr class="yellow-line">
+<h3>unlimited free rental listing</h3>
+<br>
+<h3>free tenant application</h3>
+<br>
+<h3>free standard PROVISONSTATE LEASE AGREEMENT AUTO FILL(COMING SOON)</h3>
+<h3>free standard PROVISONSTATE </h3>
+<h1>$75</h1>
+    </div>
+  </div>
+
+</style>

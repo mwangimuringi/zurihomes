@@ -1,0 +1,225 @@
+.p-center-text{
+    margin: auto !important;
+}
+
+.logo-text{
+    img{
+        display: inline;
+        // margin-top: -6px;
+        margin: 6px auto !important;
+    }
+    p{color: #fff;
+    display: inline;
+    }
+    p.logo-text-sm{font-size: 13px;}
+}
+.width-full{
+    width: 100%;
+}
+.width-30{
+    width: 30px;
+}
+
+.item-timelinebox-bg{
+    background: #f2f2f2 !important;
+}
+.timeline-item.timeline-item-left .timeline-desk .arrow-alt.item-timeline-arrow-bg{
+    border-bottom: 12px solid transparent;
+    border-left: 12px solid #f2f2f2!important;
+    border-top: 12px solid transparent;
+}
+.contract-list-item{
+    li{
+        margin-bottom: 3px;
+    }
+    .contract-b-text{
+        font-weight: bolder;
+        color:#FFEB3B;
+    }
+    .contract-title{
+        color: #15789d;
+    }
+}
+.content-contract-agreement{
+    background: #c4c8cf33;
+    padding: 30px 50px;
+    border: 2px solid #4b5d694a;
+}
+
+
+.contract-text-sign{
+    font-size: 18px;
+}
+
+.md-modal-sel-map{
+    .modal-dialog {
+        max-width: 800px;
+    }
+}
+.logo-box{
+    height: 140px;
+}
+body[data-sidebar-size="condensed"]{
+    .logo-box{
+        height: 70px;
+    }
+}
+.mt-40{
+    margin-top: 40px;
+}
+.bg-tenant-info-form{
+    background-color: #e6e6fa !important;
+}
+.form-inline-tenant-info{
+    label,select,input{
+        display: inline-block;
+    }
+    label{width: 45%;}
+    select,input{width:25%;}
+}
+.input-error-search{
+    input{border: 1px solid #ff3c3c;}
+}
+.col-form-item-3{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    label{width: 100%;}
+    input{width:32.3%;margin-right:16px; display: inline-block;}
+    input.form-input-last{float:right;margin-right: 0;}
+}
+.col-form-item{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    label{width: 100%;}
+    input,select{display: inline-block;}
+}
+.header-divider{
+    // border-top: 1px solid #4742da;
+    display: block;
+    width: 100%;
+    color: #155bb6;
+}
+.header-divider::after{
+    color: #5fabe5;
+    display: block;
+    height: 3px;
+    font-weight: bold;
+    background-color: #155bb6;
+    content: " ";
+    width: 25%;
+    margin-top: 0.5rem;
+    margin-bottom: 4px;
+}
+// .row-split-divider::after{
+//     color: #5fabe5;
+//     display: block;
+//     height: 3px;
+//     font-weight: bold;
+//     background-color: #9abcc87b;
+//     content: " ";
+//     width: 99%;
+//     margin-top: 20px;
+//     margin-bottom: 14px;
+// }
+.col-form-checkbox{
+    input,label{display: inline;}
+}
+.form-tabs-title{
+    .item-tabs-title{
+        display: inline-block;
+        padding: 16px 19px;
+        background: #e7e8e8;
+        width: auto;
+        min-width: 123px;
+        cursor: pointer;
+        text-transform: uppercase;
+        border-left: 1px solid #e2e6ea;;
+    }
+    .item-tabs-title.active,.item-tabs-title:hover{background: #ffffff; color: #155bb6;}
+    .item-tabs-title.active::after{
+            // color: #2b61e9;
+            display: block;
+            height: 3px;
+            font-weight: bold;
+            background-color: #155bb6;
+            content: " ";
+            width: 79%;
+            margin-top: 6px;
+            margin-bottom: 0;
+    }
+}
+
+.form-tabs-container{
+    margin: 0px 33px;
+    .form-tabs-content{display: none;}
+    .form-tabs-content.active{display: block;}
+}
+.container-ra{
+    // max-width: 1453px;
+    max-width: 1020px;
+    margin: auto;
+}
+.no-padding{
+    padding: 30px 0px !important;
+}
+.is-required{
+    border:1px solid #f1556c;
+}
+.m-center{
+    margin: auto;
+}
+.invalid-feedback{
+    color: #85091b;
+}
+
+.header-bordered{    border: 1px solid #000; padding: 8px 10px; }
+.bg-wa-tenant-report{
+    background: url('../../assets/images/WATenanat.png') ;
+    background-size: cover;
+    color: #646363;
+    background-position: center;
+}
+.bg-wa-tenant-report::before{
+    content: "";
+    background: #ffffffcf;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+.card-tenant-report{
+    b{color: #000;}
+}
+.rental-historial-item{
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+.title-tenant-report{text-decoration: underline;}
+.rental-historial-landlord{
+    // border-top: 1px dashed #000;
+    border-bottom: 1px dashed #000;
+    width: 100%;
+    padding-bottom: 7px;
+    margin-bottom: 9px;
+    font-size: 16px;
+}
+.rental-historial-sub-header{
+    color: #155bb6;
+}
+.reset-margin-lr{
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.no-padding-l{padding-left: 0px;}
+.form-control-noborder{border: 0px;}
+.form-readonly-input{
+    input,textarea{border: 0px; color: #155bb6;}
+}
+.row-split{
+    margin-top: 15px; border-top: 1px solid #000; padding-top: 15px;
+}
+.w-half{width: 70%;}

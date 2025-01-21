@@ -1,0 +1,338 @@
+{
+  "navbar": {
+    "search": {
+      "text": "Buscar..."
+    },
+    "dropdown": {
+      "createnew": {
+        "text": "Crear nuevo",
+        "list": {
+          "projects": "Proyectos nuevos",
+          "users": "Crear usuarios",
+          "revenue": "Informe de ingresos",
+          "settings": "Configuraciones",
+          "help": "Servicio de asistencia"
+        }
+      },
+      "megamenu": {
+        "text": "Mega menú",
+        "uicontent": {
+          "title": "Componentes de UI",
+          "list": {
+            "widgets": "Widgets",
+            "nestable": "Lista encajable",
+            "rangeslider": "Range Sliders",
+            "masonry": "Artículos de albañilería",
+            "sweetalert": "Alertas dulces",
+            "treeview": "Página Treeview",
+            "tour": "Página del tour"
+          }
+        },
+        "application": {
+          "title": "Aplicaciones",
+          "list": {
+            "ecommerce": "Páginas de comercio electrónico",
+            "crm": "Páginas de CRM",
+            "email": "Email",
+            "calendar": "Calendar",
+            "contacts": "Contactos del equipo",
+            "tasks": "Tablero de tareas",
+            "template": "Plantillas de correo electrónico"
+          }
+        },
+        "extrapages": {
+          "title": "Páginas extra",
+          "list": {
+            "leftsidebaruser": "Barra lateral izquierda con usuario",
+            "collapsed": "Menú contraído",
+            "leftsidebar": "Pequeña barra lateral izquierda",
+            "header": "Nuevo estilo de encabezado",
+            "search": "Resultado de búsqueda",
+            "gallery": "Páginas de galería",
+            "maintenance": "Mantenimiento y próximamente"
+          }
+        },
+        "discount": "Venta de descuento especial!",
+        "subtext": "Ahorre hasta un 70% de descuento.",
+        "buttontext": "Descargar ahora"
+      },
+      "site": {
+        "list": {
+          "github": "GitHub",
+          "bitbucket": "Bitbucket",
+          "dribbble": "Regate",
+          "dropbox": "Dropbox",
+          "g-suite": "G Suite",
+          "slack": "Flojo"
+        }
+      },
+      "notification": {
+        "badge": "5",
+        "text": "Notificaciones",
+        "subtext": "Limpiar todo",
+        "1": {
+          "title": "Doug Dukes comentó en Admin Dashboard",
+          "text": "Hace 1 minuto"
+        },
+        "2": {
+          "title": "Mario Drummond",
+          "text": "¿Hola! Cómo estás? ¿Qué pasa con nuestra próxima reunión?"
+        },
+        "3": {
+          "title": "Karen Robinson",
+          "text": "Guauu ! este administrador se ve bien y un diseño impresionante"
+        },
+        "4": {
+          "title": "Nueva usuario registrada.",
+          "text": "hace 5 horas"
+        },
+        "5": {
+          "title": "Caleb Flakelar comentó en Admin",
+          "text": "Hace 4 días"
+        },
+        "6": {
+          "title": "Recomendado por Carlos Crouch",
+          "text": "Hace 13 dias"
+        },
+        "button": "Ver todo"
+      },
+      "name": {
+        "text": "Nik Patel",
+        "list": {
+          "greet": "Bienvenidos !",
+          "account": "Mi cuenta",
+          "mywallet": "Mi billetera",
+          "settings": "Configuraciones",
+          "lockscreen": "Bloquear pantalla",
+          "logout": "Cerrar sesión"
+        }
+      }
+    }
+  },
+  "menuitems": {
+    "navigation": {
+      "text": "Navegación"
+    },
+    "dashboard": {
+      "text": "Tablero",
+      "badge": "3",
+      "list": {
+        "sales": "Ventas",
+        "crm": "CRM",
+        "analytics": "Analítica"
+      }
+    },
+    "apps": {
+      "text": "Aplicaciones"
+    },
+    "chat": {
+      "text": "Charla"
+    },
+    "ecommerce": {
+      "text": "Comercio electrónico",
+      "badge": "Nueva",
+      "list": {
+        "products": "Lista de productos",
+        "productsgrid": "Productos Grid",
+        "productdetail": "Detalle del producto",
+        "createproduct": "Crear producto",
+        "customers": "Clientes",
+        "orders": "Pedidos",
+        "orderdetail": "Detalle de la orden",
+        "sellers": "Vendedoras",
+        "cart": "Carrito de compras",
+        "checkout": "Revisa"
+      }
+    },
+    "calendar": {
+      "text": "Calendario"
+    },
+    "email": {
+      "text": "Email",
+      "list": {
+        "inbox": "Bandeja de entrada",
+        "reademail": "Read Email",
+        "template": "Plantillas de correo electrónico"
+      }
+    },
+    "companies": {
+      "text": "Compañías"
+    },
+    "tasks": {
+      "text": "Tasks",
+      "list": {
+        "list": "Lista",
+        "detail": "Detalles",
+        "kanban": "Tablero Kanban"
+      }
+    },
+    "ticket": {
+      "text": "Entradas"
+    },
+    "contacts": {
+      "text": "Contactos",
+      "list": {
+        "members": "Lista de miembros",
+        "profile": "Perfil"
+      }
+    },
+    "filemanager": {
+      "text": "Administradora de archivos"
+    },
+    "custom": {
+      "text": "Personalizada"
+    },
+    "auth": {
+      "text": "Páginas de autenticación",
+      "list": {
+        "login": "Iniciar sesión",
+        "login-2": "Iniciar sesión 2",
+        "register": "Registrarse",
+        "register-2": "Registrarse 2",
+        "signin-signup": "Ingresar. Registrarse",
+        "signin-signup-2": "Ingresar. Registrarse 2",
+        "recoverpwd": "Recuperar contraseña",
+        "recoverpwd-2": "Recuperar contraseña 2",
+        "lock-screen": "Bloquear pantalla",
+        "lock-screen-2": "Bloquear pantalla 2",
+        "logout": "Cerrar sesión",
+        "logout-2": "Cerrar sesión 2",
+        "confirm-mail": "Confirmar correo",
+        "confirm-mail-2": "Confirmar correo 2"
+      }
+    },
+    "extrapages": {
+      "text": "Páginas extra",
+      "list": {
+        "starter": "Arrancadora",
+        "timeline": "Cronología",
+        "sitemap": "Mapa del sitio",
+        "invoice": "Factura",
+        "faqs": "Preguntas frecuentes",
+        "search-results": "Resultados de la búsqueda",
+        "pricing": "Precios",
+        "maintenance": "Mantenimiento",
+        "comingsoon": "Próximamente",
+        "lightbox": "Caja ligera",
+        "error404": "Error 404",
+        "error404-alt": "Error 404-alt",
+        "error500": "Error 500"
+      }
+    },
+    "components": {
+      "text": "Componentes"
+    },
+    "ui": {
+      "text": "IU base",
+      "list": {
+        "avatars": "Avatares",
+        "buttons": "Botones",
+        "cards": "Tarjetas",
+        "carousel": "Carrusel",
+        "dropdowns": "Listas deplegables",
+        "video": "Insertar video",
+        "general": "IU general",
+        "grid": "Cuadrícula",
+        "images": "Imagenes",
+        "listgroup": "Grupo de lista",
+        "modals": "Modales",
+        "notifications": "Notificaciones",
+        "portlet": "Portlets",
+        "progress": "Progreso",
+        "ribbons": "Cintas",
+        "spinners": "Hilanderas",
+        "tabs": "Pestañas y acordeones",
+        "tooltip": "Información sobre herramientas",
+        "typography": "Tipografía"
+      }
+    },
+    "extendedui": {
+      "badge": "Caliente",
+      "text": "IU extendida",
+      "list": {
+        "rangeslider": "Control deslizante de rango",
+        "sweetalert": "Alerta dulce",
+        "tour": "Página del tour",
+        "scrollspy": "Scrollspy"
+      }
+    },
+    "widgets": {
+      "text": "Widgets"
+    },
+    "icons": {
+      "text": "Iconos",
+      "list": {
+        "feather": "Pluma",
+        "remix": "Remix",
+        "boxicons": "Boxicones",
+        "materialdesign": "Diseño de materiales",
+        "dripicons": "Dripicons",
+        "fontawesome": "Font Awesome 5",
+        "weather": "Clima"
+      }
+    },
+    "forms": {
+      "text": "Formularios",
+      "list": {
+        "elements": "Elementos generales",
+        "advanced": "Avanzado",
+        "validation": "Validación",
+        "wizard": "Mago",
+        "mask": "Máscara",
+        "editor": "Editora de plumas",
+        "fileupload": "Subidas de archivos"
+      }
+    },
+    "tables": {
+      "text": "Mesas",
+      "list": {
+        "basic": "Tablas básicas",
+        "advanced": "Tabla avanzada"
+      }
+    },
+    "charts": {
+      "text": "Gráficos",
+      "list": {
+        "apex": "Apéndice",
+        "chartjs": "Chartjs",
+        "c3": "C3",
+        "chartist": "Chartista",
+        "knob": "Mando"
+      }
+    },
+    "maps": {
+      "text": "Mapas",
+      "list": {
+        "googlemap": "mapas de Google"
+      }
+    },
+    "pages": {
+      "text": "Páginas"
+    },
+    "authstyle": {
+      "text": "Estilo de autenticación 1"
+    },
+    "authstyle2": {
+      "text": "Estilo de autenticación 2"
+    },
+    "errors": {
+      "text": "Errores"
+    },
+    "utility": {
+      "text": "Utilidad"
+    },
+    "multilevel": {
+      "text": "Multi nivel",
+      "list": {
+        "level1": {
+          "1": "Nivel 1.1",
+          "2": "Nivel 1.2",
+          "level2": {
+            "1": "Nivel 2.1",
+            "2": "Nivel 2.2"
+          }
+        }
+      }
+    }
+  }
+}

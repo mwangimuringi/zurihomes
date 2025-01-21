@@ -1,0 +1,672 @@
+<script>
+/**
+ * Product-detail component
+ */
+export default {
+    head() {
+        return {
+            title: `${this.title} | `+process.env.appName,
+        };
+    },
+    async asyncData({
+        params
+    }) {
+        return params.id;
+        // const productDetail = products.find(
+        //     (user) => String(user.id) === params.id
+        // );
+        // return {productDetail};
+        // let response = await this.$axios.$post("/properties/view/"+params.id);
+        // this.propertyDetail=response.data;
+        // this.propertyPhotos=response.photos;
+        // return {property:response.data,photos:response.photos};
+    },
+    data() {
+        return {
+            title: "Rental Application",
+            items: [{
+                    text: "WA",
+                },
+                {
+                    text: this.title,
+                },
+                {
+                    text: 'View Rental Application',
+                    active: true,
+                },
+            ],
+            isLoaded:false,
+            propertyIdRegUI:this.$route.params.id,
+            rentalApplicationView: null,
+            propertyPhotos: null,
+            propertyAmenities: null,
+            propertyCity: null,
+            propertyStates: null,
+            propertyPhotoURL:process.env.apiBaseUrl.replace('/api','')+"/photos/",
+        };
+    },
+    middleware: "auth",
+
+    methods: {
+        /**
+         * Change the product
+         */
+        changeImage(data) {
+            // console.log("check Data", data.target.getAttribute('filelarge'));
+            // console.log("myImage ",  document.getElementById("myImage_0"));
+            // document.getElementById("myImage_0").src = data.target.filelarge
+            document.getElementById("myImage_0").src = data.target.getAttribute('imageslide');
+            // document.getElementById("myImage_0").src = data.target.getAttribute('filelarge');
+        },
+        async getRentalApplicationView() {
+	           let response = await this.$axios.$post("/tenants/rentalapp-view/"+this.propertyIdRegUI);
+            this.rentalApplicationView=response.data;
+	            let tenantId = response.data.tenant_id;
+            console.log("Tenant ID:", tenantId);    
+            this.isLoaded=true;
+        },
+       async  _app_get_country(regId){
+            let response =  this.$axios.$get("/company/get-country/"+regId);
+            setTimeout(() => {
+                if(response.status=='ok'){
+                    console.log('country',response.data.name)
+                    return response.data.name;
+                }else{
+                    return "";
+                }
+            }, "2000");
+        },
+
+	async updateApproval(){
+
+	let response=await this.$axios.$post("/company/update-app/"+this.propertyIdRegUI,{
+	                user_updated: this.$auth.user.user_login_id,
+				approved_value: "approved",
+			tenant_id: this.rentalApplicationView.tenant_id,
+});
+	this.getRentalApplicationView();
+},
+
+
+
+      
+        async _app_get_province(regId){
+            let response = await this.$axios.$get("/company/get-state/"+regId);
+            if(response.status=='ok'){
+                return response.data.name;
+            }else{
+                return "";
+            }
+        },
+    },
+    mounted(){
+        
+        this.getRentalApplicationView();
+    },
+};
+</script>
+
+<template>
+<div>
+    <PageHeader :title="title" :items="items" />
+    <div v-if="isLoaded" class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body form-readonly-input">
+                    <div class="row">
+                    <div class="col-6">
+		<h5>Status</h5>
+		<div v-if="rentalApplicationView.status_verified===1" class="badge p-1 badge-soft-success">
+                Verified
+		</div>
+		<div v-if="rentalApplicationView.status_verified!==1" class="badge p-1 badge-soft-danger">
+		Not Verified
+				</div>
+		 <b-dropdown class="float-right" right toggle-class="text-muted p-0" variant="black">
+            <template v-slot:button-content>
+                <i class="mdi mdi-dots-horizontal font-18"></i>
+            </template>
+            
+            <b-dropdown-item @click="updateApproval">
+                <i class="mdi mdi-content-copy mr-1"></i>Mark as Approved
+            </b-dropdown-item>
+            <div class="dropdown-divider"></div>
+            
+           
+        </b-dropdown>		
+           <div class="col-6">
+                            <h4>ABOUT YOU</h4>
+                        </div>
+                        <div class="col-6">
+                            <h4>Date when filled out: {{ this._app_format_datetime_AP(rentalApplicationView.date_created) }}</h4>
+                
+			<h4> {{this._app_get_city(rentalApplicationView.ABOUTcity)}}
+
+       </div>
+                        <div class="col-12">
+                            <label for="full-name" >Full Name:(Exactly as on driver's licence or govt. ID</label><br/>
+                            <input type="text" name="ABOUTfirst-name" class="form-label form-control-noborder" placeholder="First Name" readonly v-model="rentalApplicationView.ABOUTfirst_name" />
+                            <input type="text" name="ABOUTmiddle-name" class="form-label form-control-noborder" placeholder="Middle Name" readonly v-model="rentalApplicationView.ABOUTmiddle_name"/>
+                            <input type="text" name="ABOUTlast-name" class="form-label form-control-noborder" placeholder="Last Name" readonly v-model="rentalApplicationView.ABOUTlast_name"/>
+                            <!-- <input type="text" class="input-disabled" readonly placeholder="Landlord's Email" value="<?php echo $userTenant['user_login_username']; ?>"/> -->
+                        </div>
+                        <div class="col-12 mt-3">
+                            <label for="Your Street Address">Your street address <br/>(as shown on your driver's license or government ID card)</label>
+                            <br/>
+                            <input type="text" name="ABOUTstreet" class="form-label form-control-noborder" placeholder="Street Number" readonly v-model="rentalApplicationView.ABOUTstreet"/>
+                            <input type="text" name="ABOUTstreet_Name" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.ABOUTstreet_Name"/>
+                            <label for="country">Country:</label>
+                            <input type="text" name="ABOUTCountry" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.ABOUTCountry"/>
+                            
+
+                            <label for="stateprovince">State/Province:</label>
+                            <input type="text" name="ABOUTCountry" class="form-label form-control-noborder" placeholder="Street Name" readonly :value="this._app_get_city(rentalApplicationView.ABOUTcity)" v-model="rentalApplicationView.ABOUTstateprovince"/>
+                            
+
+                            <label for="dropdown">City:</label>
+                            <input type="text" name="ABOUTcity" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.ABOUTcity"/>
+                        
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <label for="driverlic">Driver's Licence: State/Province</label>
+                                <input type="driverlic" name="ABOUTdrivers-licence" id="number" class="form-label form-control-noborder" readonly v-model="rentalApplicationView.ABOUTdrivers_licence"/>
+                            <label for="idcard">Or govt. photo ID card</label>
+                                <input type="idcard" name="ABOUTidcard" id="number" class="form-label form-control-noborder" readonly v-model="rentalApplicationView.ABOUTidcard"/>
+                        </div>
+                        <br>
+                        <div class="col-12 ">
+                            <label for="full-name">Former last names (maiden and married)</label><br/>
+                            <input type="text" name="Formerlast_name" class="form-label mb-20" placeholder="Former Last Name"  readonly v-model="rentalApplicationView.Formerlast_name"/>
+                            <input type="text" name="Formerlast2_name" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.Formerlast2_name"/>
+                            <input type="text" name="Formerlast3_name" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.Formerlast3_name"/>
+                        </div>
+                        <br>
+                        <div class="div col-12">
+                            <label for="dropdown">What Citizenship do you hold:</label>
+                            <input type="text" name="Applicantcitizenship" class="form-label form-control-noborder" placeholder="Street Number" readonly v-model="rentalApplicationView.Applicantcitizenship"/>
+                            
+                        </div>
+                        <br>
+                        <div class="div col-12">
+                            <label for="date">Date of Birth:</label>
+                            <input type="text" class="form-control-noborder" name="Applicantdatebirth" id="date"  readonly :value="this._app_format_datetime_dob(rentalApplicationView.Applicantdatebirth)"/>
+                        </div>
+                        <br>
+                        <div class="div col-12">
+                            <label for="height">Height</label>
+                            <input type="text" name="Applicantheight" class="text-right" id="Applicantheight"  readonly v-model="rentalApplicationView.Applicantheight"/>
+                            <input type="text" name="Applicantheight_ms" id="Applicantheight_ms"  readonly v-model="rentalApplicationView.Applicantheight_ms"/>
+                            
+                            
+                            <label for="height">Weight</label>
+                            <input type="text" name="Applicantweight" class="text-right" id="Applicantweight"  readonly v-model="rentalApplicationView.Applicantweight"/>
+                            <input type="text" name="Applicantweight_ms" id="Applicantweight_ms"  readonly v-model="rentalApplicationView.Applicantweight_ms"/>
+                            
+                            
+                            <label for="height">Eye Color</label>
+                            <input type="text" name="Applicanteyecolor" id="Applicanteyecolor"  readonly v-model="rentalApplicationView.Applicanteyecolor"/>
+                            
+                            <label for="height">Hair Color</label>
+                            <input type="text" name="Applicanthair-color" id="Applicanthaircolor"  readonly v-model="rentalApplicationView.Applicanthair_color"/>
+                            <label for="dropdown">Sex:</label>
+                            <input type="text" name="Sex" id="sex"  readonly :value="this._app_onGetSexName(rentalApplicationView.Sex)"/>
+                            
+                        </div>
+                        <br>
+                        <div class="div col-12">
+                            <label for="radio">Marital Status:</label>
+                            <input type="text" name="Sex" id="sex"  readonly :value="this._app_onGetMaritalStatus(rentalApplicationView.maritalStatus)"/>
+                            
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="radio">Do you or any occupant smoke?</label>
+                            <input type="text" name="Sex" id="sex"  readonly :value="rentalApplicationView.smoker"/>
+                            
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="radio">Will you or any occupant have an animal?</label>
+                            <input type="text" name="Sex" id="sex"  readonly :value="rentalApplicationView.animalStat"/>
+                            
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="message">If yes, type, weight, breed, age:</label><br/>
+                            <textarea rows="4" cols="50" name="Animalscomment" id="message"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="row row-split">
+                        <div class="col-12">
+                            <label for="Currenthomeaddress">Current Home Address (Where you live now) </label><br/>
+                                <input type="text" name="Currentstreet" class="form-label mb-20" placeholder="Street Number" readonly v-model="rentalApplicationView.Currentstreet"/>
+                                <input type="text" name="Currentstreetname" class="form-label mb-20" placeholder="Street Name" readonly v-model="rentalApplicationView.Currentstreetname"/>
+                        </div>
+                        <br>
+                        
+                        <div class="col-12">        
+                            <label for="country">Country:</label>
+                            <input type="text" name="CurrentCountry" class="form-label form-control-noborder" placeholder="Street Name" readonly :value="this._app_get_country(rentalApplicationView.CurrentCountry)"/>
+                                
+                        </div>
+                        <br>
+                        <div class="col-12">        
+                            <label for="Currentprovince">State/Province:</label>
+                            <input type="text" name="Currentstateprovince" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Currentstateprovince"/>
+                               
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="dropdown">City:</label>
+                            <input type="text" name="Currentcity" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Currentcity"/>
+                                
+                        </div>
+                        
+                        <br>
+                        <div class="col-12">                    
+                            <label for="number">Phone #:</label>
+                                <input type="tel" name="Currentphoneno" placeholder="Enter a valid number" id="phone_number" readonly v-model="rentalApplicationView.Currentphoneno"/>
+                        </div>
+                        <br>
+                        <div class="col-12">       
+                            <label for="number">Cell #:</label>
+                            <input type="cellnumber" name="Currentcellnumber" id="number" readonly v-model="rentalApplicationView.Currentcellnumber"/>   
+                        </div>
+                    </div>
+
+                    <div class="row row-split">
+                        <div class="col-12">
+                            <label for="Current home Address">Your previous home address</label><br/>
+                                <input type="text" name="Previousstreetno" class="form-label mb-20" placeholder="Street Number" readonly v-model="rentalApplicationView.Previousstreetno" />
+                                <input type="text" name="Previous-address" class="form-label mb-20" placeholder="Street Name" readonly v-model="rentalApplicationView.Previous_address"/>
+                        </div>
+                        <br>
+                        
+                        
+                        <div class="col-12">
+                            <label for="country">Country:</label>
+                            <input type="text" name="PreviousCountry" class="form-label form-control-noborder" placeholder="Street Name" readonly :value="this._app_get_country(rentalApplicationView.PreviousCountry)"/>
+                            <br/>
+                        </div>
+                        <div class="col-12">
+                            <label for="previousprovince">State/Province:</label>
+                            <input type="text" name="Previousstateprovince" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Previousstateprovince"/>
+                                
+                        </div>
+                        <br/>
+                        <div class="col-12">
+                            <label for="dropdown">City:</label>
+                            <input type="text" name="Previouscity" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Previouscity"/>
+                            
+                        </div>
+                        <br/>
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Name of above owner or manager's name:</label>
+                                <input type="text" name="Currentowner" id="currentowner" readonly v-model="rentalApplicationView.Currentowner">
+                            <label for="number">Their Phone Number</label>
+                                <input type="text" name="Ownerphonenumber" id="number" readonly v-model="rentalApplicationView.Ownerphonenumber">
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="number">Previous monthly Rent</label>
+                            <input type="text" name="Previousrent-monthly" class="text-right" id="rent" placeholder="$" readonly v-model="rentalApplicationView.Previousrent_monthly"/> 
+                            <input type="text" name="Previousrent-monthly_currency" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Previousrent_monthly_currency"/>
+                            
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="date">Date you moved in:</label>
+                                <input type="text" name="Previousmove-in" id="date" readonly :value="this._app_format_datetime_dob(rentalApplicationView.Previousmove_in)" />
+                            <label for="date">Date you moved out:</label>
+                                <input type="text" name="Previousmove-out" id="date" readonly :value="this._app_format_datetime_dob(rentalApplicationView.Previousmove_out)"/>
+                            </div>
+
+                    </div>
+
+                    <!--- employeer-->
+                    <div class="row row-split">
+                        <div class="col-12">
+                            <label for="text">Present Employer</label><br/>
+                                <textarea rows="1" cols="50"  name="Presentemployer" id="message" readonly v-model="rentalApplicationView.Presentemployer"></textarea>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="Work Address">Address</label>
+                            <input type="text" name="Presentworkaddress" class="form-label mb-20" placeholder="" readonly v-model="rentalApplicationView.Presentworkaddress"/>
+                        </div>
+                        
+                        
+                        <br>
+                        <div class="col-12">
+                            <label for="country">Country:</label>
+                            <input type="text" name="Presentworkcountry" class="form-label form-control-noborder" placeholder="Street Name" readonly :value="this._app_get_country(rentalApplicationView.Presentworkcountry)"/>
+                            <br/>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="stateprovince">State/Province:</label>
+                            <input type="text" name="Presentworkstateprovince" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Presentworkstateprovince"/>
+                                
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="dropdown">City:</label>
+                            <input type="text" name="Presentworkcity" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Presentworkcity"/>
+                               
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="number">Work Phone:</label>
+                                <input type="tel" name="Presentworkphone" placeholder="Enter a valid number" id="phone_number" readonly v-model="rentalApplicationView.Presentworkphone"/>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Position</label>
+                            <input type="text" name="Presentworkposition" id="position" readonly v-model="rentalApplicationView.Presentworkposition"> 
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="number">Gross monthly income was over:</label>
+                            <input type="text" name="Presentmonthly-income" class="text-right" id="income" placeholder="$"/>
+                            <input type="text" name="Previousrent-monthly_currency" class="form-label form-control-noborder" placeholder="Street Name" readonly v-model="rentalApplicationView.Previousrent_monthly_currency"/>
+                             
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="date">Dates you began and ended this job:</label>
+                            <input type="text" name="Presentdatestart" id="date" readonly v-model="rentalApplicationView.Presentdatestart"/>
+                            <input type="tex" name="Presentdateend" id="date" readonly v-model="rentalApplicationView.Presentdateend"/> 
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Supervisor's name and phone:</label>
+                            <input type="text" name="Presentsupername" id="name" readonly v-model="rentalApplicationView.Presentsupername" >
+                            <input type="text" name="Presentsuperphone-number" id="number" readonly v-model="rentalApplicationView.Presentsuperphone_number"> 
+                        </div>
+                        
+
+                    </div>
+                    <!--- your credit-->
+                 <!--   <div class="row row-split">
+                        <div class="col-12">
+                            <h4>YOUR CREDIT HISTORY</h4>
+                        </div>
+
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Your bank's name, city, state, country:</label>
+                            <input type="text" name="Currentbank" id="Currentbank" readonly v-model="rentalApplicationView.Presentworkaddress">
+                            
+                            
+                            <label for="country">Country:</label>
+                            <input type="text" name="Currentbankcountry" id="Currentbankcountry" readonly :value="this._app_get_country(rentalApplicationView.Currentbankcountry)">
+                            
+                            <label for="stateprovince">State/Province:</label>
+                            <input type="text" name="Currentbankstateprovince" id="Currentbankstateprovince" readonly v-model="rentalApplicationView.Currentbankstateprovince">
+                             
+                            <label for="dropdown">City:</label>
+                            <input type="text" name="Currentbankcity" id="Currentbankcity" readonly v-model="rentalApplicationView.Currentbankcity">
+                            
+                        </div>
+                        <br>
+                        <div class="col-12">
+                        <label for="text">List major credit cards:</label><br/>
+                            <textarea rows="2" cols="30"  name="Currentcredit-cards" id="message" readonly v-model="rentalApplicationView.Presentworkaddress"></textarea> 
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Other non-work income you want considered.<br/> Please explain:</label><br/>
+                                <textarea rows="2" cols="30"  name="Currentotherincome" id="message" readonly v-model="rentalApplicationView.Presentworkaddress"></textarea>
+                        </div>
+                    </div>
+-->
+                    <!---  YOUR RENTAL/CRIMINAL HISTORY-->
+                    <div class="row row-split">
+                        <div class="col-12">
+                            <h4>YOUR RENTAL/CRIMINAL HISTORY</h4>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <p>Have you, your spouse, or any occupant listed in this Application ever:</p>
+                            <input class="radio" type="checkbox" name="Previousevicted" value="1" id="radio" v-model="rentalApplicationView.Previousevicted"/>
+                                <label for="radio">been evicted or asked to move out?</label>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <input class="radio" type="checkbox" name="Previousmoved" value="1" id="radio" v-model="rentalApplicationView.Previousmoved"/>
+                                <label for="radio">moved out of a dwelling before the end of the lease term without the
+                                owner's consent?</label>  
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <input class="radio" type="checkbox" name="Previousbankruptcy" value="1" id="radio" v-model="rentalApplicationView.Previousbankruptcy"/>
+                                <label for="radioradioradio">declared bankruptcy?</label>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <input class="radior" type="checkbox" name="Previoussued" value="1" id="radior" v-model="rentalApplicationView.Previoussued"/>
+                                <label for="radior">been sued for rent? </label>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <input class="radio" type="checkbox" name="Previousdamage" value="1" id="radio" v-model="rentalApplicationView.Previousdamage"/>
+                                <label for="radio">been sued for property damage?</label>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <input class="radio" type="checkbox" name="Previouscrime" value="1" id="radio" v-model="rentalApplicationView.Previouscrime"/>
+                            <label for="radio">been charged, detained, or arrested for a felony, misdemeanor involving a controlled substance, violence to another person or destruction of property, or a sex crime that was resolved by conviction, probation, deferred adjudication, court ordered community supervision, or pretrial diversion?</label>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <input class="radio" type="checkbox" name="Previousfelony" value="1" id="radio" v-model="rentalApplicationView.Previousfelony"/>
+                                <label for="radio">been charged, detained, or arrested for a felony, misdemeanor involving a controlled
+                                    substance, violence to another person or destruction of property, or a sex crime that
+                                    has not been resolved by any method? Please indicate below the year, location and
+                                    type of each felony, misdemeanor involving a controlled substance, violence to
+                                    another person or destruction of property, or sex crime other than those resolved by
+                                    dismissal or acquittal.</label>
+                                    <p>We may need to discuss more facts before making a decision</p>        
+                        </div>
+                        <br>
+                        <div class="col-12">
+                           <!-- <input class="radio" type="checkbox" name="Currentanswer" value="1" id="radio" v-model="rentalApplicationView.Currentanswer"/> -->
+                                <label for="message">You represent the answer is "no" to any item not checked above.</label><br/>
+                        </div>
+                    </div>
+
+                     <!---  YOUR SPOUSE -->
+                     <div class="row row-split">
+                        <div class="col-12">
+                            <h4>YOUR SPOUSE</h4>
+                        </div>
+                        <div class="col-12">
+                                <label for="full-name">Full Name:</label><br/>
+                                <input type="text" name="SPOUSEfirst-name" class="form-label" placeholder="First Name" readonly v-model="rentalApplicationView.SPOUSEfirst_name"/>
+                                <input type="text" name="SPOUSEmiddle-name" class="form-label" placeholder="Middle Name" readonly v-model="rentalApplicationView.SPOUSEmiddle_name"/>
+                                <input type="text" name="SPOUSElast-name" class="form-label" placeholder="Last Name" readonly v-model="rentalApplicationView.SPOUSElast_name"/>
+                        </div> 
+                        <br>
+                        <div class="col-12">
+                            <label for="driverlic">Driver's Licence: State/Province</label>
+                                <input type="driverlic" name="SPOUSEdrivers-licence" id="number" readonly v-model="rentalApplicationView.SPOUSEdrivers_licence"/>
+                            <label for="idcard">Or govt. photo ID card</label>
+                                <input type="idcard" name="SPOUSEidcard" id="number" readonly v-model="rentalApplicationView.SPOUSEidcard"/>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="full-name">Former last names (maiden and married)</label><br/>
+                                <input type="text" name="SPOUSEformerfirst-name" class="form-label mb-20" placeholder="Former Last Name"  readonly v-model="rentalApplicationView.SPOUSEfirst_name"/>
+                                <input type="text" name="SPOUSEformermiddle-name" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.SPOUSEfirst_name"/>
+                                <input type="text" name="SPOUSEformerlast-name" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.SPOUSEfirst_name"/>
+                        </div> 
+                        <br>
+                        <div class="col-12">
+                            <label for="dropdown">What Citizenship do you hold:</label>
+                            <input type="text" name="SPOUSEcitizenship" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.SPOUSEcitizenship"/>
+                        </div> 
+                        <br>
+                        <div class="col-12">
+                            <label for="date">Date of Birth:</label>
+                                <input type="text" name="SPOUSEdatebirth" readonly v-model="rentalApplicationView.SPOUSEdatebirth" />
+                        </div> 
+                        <br>
+                        <div class="col-12">
+                            <label for="height">Height</label>
+                            <input type="text" name="SPOUSEheight" id="height" readonly v-model="rentalApplicationView.SPOUSEsex"/> 
+                            <input type="text" name="SPOUSEheight_ms" id="SPOUSEheight_ms" readonly v-model="rentalApplicationView.SPOUSEheight_ms" />
+                            
+                            
+                            <label for="height">Weight</label>
+                            <input type="text" name="SPOUSEweight" id="weight" readonly v-model="rentalApplicationView.SPOUSEsex" />  
+                            <input type="text" name="SPOUSEweight_ms" id="SPOUSEweight_ms" readonly v-model="rentalApplicationView.SPOUSEweight_ms" />
+                            
+                            
+                            <label for="height">Eye Color</label>
+                            <input type="text" name="SPOUSEeye-color" id="eye-color" readonly v-model="rentalApplicationView.SPOUSEeye_color"/>
+                            
+                            <label for="height">Hair Color</label>
+                            <input type="text" name="SPOUSEhair-color" id="hair-color" readonly v-model="rentalApplicationView.SPOUSEhair_color"/>
+                        </div> 
+                        <br>
+                        <div class="col-12">
+                            <label for="dropdown">Sex:</label>
+                            <input type="text" name="SPOUSEsex" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.SPOUSEsex"/>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Present Employer</label><br/>
+                            <textarea rows="1" cols="50"  name="SPOUSEpresentemployer" id="SPOUSEpresentemployer" readonly v-model="rentalApplicationView.SPOUSEpresentemployer"></textarea>
+                            <br>
+                            <label for="Current home Address">Address</label>
+                            
+                            <input type="text" name="SPOUSEpresentstreetName" class="form-label mb-20" placeholder="" readonly v-model="rentalApplicationView.SPOUSEpresentstreetName"/><br>
+                                
+                            <label for="country">Country:</label>
+                            <input type="text" name="SPOUSEpresentcountry" class="form-label mb-20" placeholder="Former Last Name" readonly :value="this._app_get_country(rentalApplicationView.SPOUSEpresentcountry)"/>
+                            
+                            
+                            <label for="state/province">State/Province:</label>
+                            <input type="text" name="SPOUSEpresentstateprovince" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.SPOUSEpresentstateprovince"/>
+                            
+
+                            <label for="dropdown">City:</label>
+                            <input type="text" name="SPOUSEpresentcity" class="form-label mb-20" placeholder="Former Last Name" readonly v-model="rentalApplicationView.SPOUSEpresentcity"/>
+                            
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="number">Work Phone:</label>
+                            <input type="tel" name="SPOUSEpresentworkphone" placeholder="Enter a valid number" id="phone_number" readonly v-model="rentalApplicationView.SPOUSEpresentworkphone"/>
+                        </div>
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Position</label>
+                            <input type="text" name="SPOUSEpresentposition" readonly v-model="rentalApplicationView.SPOUSEpresentposition">
+                        </div> 
+                        <br>
+                        <div class="col-12">
+                            <label for="date">Date you began job:</label>
+                            <input type="text" name="SPOUSEpresentjobdate" readonly v-model="rentalApplicationView.SPOUSEpresentjobdate"/>
+                        </div> 
+                        <br>
+                        <div class="col-12">
+                            <label for="text">Supervisor's name and phone:</label>
+                            <input type="text" name="SPOUSEsupername" readonly v-model="rentalApplicationView.SPOUSEsupername">
+                            <input type="text" name="SPOUSEphone-number" readonly v-model="rentalApplicationView.SPOUSEphone_number">
+                        </div> 
+                    </div>
+
+                    <!---  YOUR VEHICLES -->
+                    <div class="row row-split">
+                        <div class="col-12">
+                            <h4>YOUR VEHICLES</h4>
+                            <p><i>List all vehicles owned or operated by you, your spouse, or any occupants(including cars, trucks, motorcycles, trailers, etc.)</i></p>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="text">Make of vehicle:</label>
+                            <input type="text" name="Allvehicles_make" readonly v-model="rentalApplicationView.Allvehicles_make">
+                            
+                            <label for="text">Color of vehicle:</label>
+                            <input type="text" name="Allvehicles_color" readonly v-model="rentalApplicationView.Allvehicles_color">
+                            
+                            <label for="number">Year:</label>
+                            <input type="text" name="Allvehicles_year" readonly v-model="rentalApplicationView.Allvehicles_year">
+                            
+                            <label for="text">Licence#:</label>
+                            <input type="text" name="Allvehicles_lic" readonly v-model="rentalApplicationView.Allvehicles_lic" >
+                        </div>
+                        <br>
+                        <div class="col-12"> 
+                            <label for="state/province">State/Province:</label>
+                            <input type="text" name="Allvehicles_stateprovince" readonly v-model="rentalApplicationView.Allvehicles_stateprovince" >
+                        </div>
+                    </div>
+
+                    <!---  EMERGENCY -->
+                    <div class="row row-split">
+                        <div class="col-12">
+                            <h4>EMERGENCY</h4>
+                            <p><i>Emergency contact person over 18, who will not be living with you</i></p>
+                        </div>
+                        <div class="col-12">
+                            <label for="text">Name:</label>
+                            <input type="text" name="Emergency_name" id="Emergency_name" readonly v-model="rentalApplicationView.Emergency_name">
+                            <label for="Address">Address</label>
+                            <input type="text" name="Emergency_address" id="Emergency_address" class="form-label mb-20" placeholder="" readonly v-model="rentalApplicationView.Emergency_address"/>
+                            
+                        
+                            <label for="country">Country:</label>
+                            <input type="text" name="Emergency_country" readonly :value="this._app_get_country(rentalApplicationView.Emergency_country)">
+                            
+
+                            <label for="state/province">State/Province:</label>
+                            <input type="text" name="Emergency_stateprovince" readonly v-model="rentalApplicationView.Emergency_stateprovince">
+                            
+
+                            <label for="dropdown">City:</label>
+                            <input type="text" name="Emergencycity" readonly v-model="rentalApplicationView.Emergencycity">
+                            
+                        </div>
+                        <br>
+                        <div class="col-12">                                        
+                            <label for="number">Cell Phone:</label>
+                            <input type="text" name="Emergency_cellphone" id="number" readonly v-model="rentalApplicationView.Emergency_cellphone" />
+                            <label for="number">Work Phone:</label>
+                            <input type="tel" name="Emergency_workphone" placeholder="" id="phone_number" readonly v-model="rentalApplicationView.Emergency_workphone" />
+                            <label for="number">Home Phone:</label>
+                            <input type="text" name="Emergency_homephone" id="number" readonly v-model="rentalApplicationView.Emergency_homephone" /> 
+                            <label for="text">Relationship</label>
+                            <input type="text" name="EmergEmergency_relationshipency_homephone" id="number" readonly v-model="rentalApplicationView.Emergency_relationship" /> 
+                            
+                        </div>
+                    </div>
+
+
+                    <!---  EMERGENCY -->
+                    <div class="row row-split">
+                        <div class="col-12">
+                            <h4>AUTHORIZATION</h4>
+                        </div>
+                        <div class="col-12">
+                            <label for="text">I or we authorize<i>(owner's name)</i></label>
+                            <input type="text" name="Ownerauthorize" class="input-disabled w-half" readonly v-model="rentalApplicationView.Ownerauthorize">
+                            <p>to obtain reports from World Association Tenant Bureau before, during, and after
+                                tenancy on matters relating to a lease by the above owner to me and to verify, by
+                                all available means, the information in this application, including criminal
+                                background information, income history and other information reported by
+                                employer(s) to any Province/State employment security agency. Work history
+                                information may be used only for this Rental Application. I also permit cross-borded use
+                                of this database and my rental history should I rent or try to rent any place Globally.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</template>

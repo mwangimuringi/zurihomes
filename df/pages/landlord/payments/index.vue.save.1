@@ -1,0 +1,205 @@
+<template>
+
+<div class="cards">
+    <div class="cardss card1">
+      <h2 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 30px;">BRONZE</h2>
+      <hr class="yellow-line">
+<br>
+      <p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">1 Tenant Search</p>
+      
+      <p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px; color:white">Unlimited Free Rental</p>
+      
+      <p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px; color:white;">Free input of tenants rentals history from your landlord<p>
+      <h1 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 35px; color:white;">$23.99</h1>
+<button class="btn btn-primary" @click="subscribe(generateRandomString(),generateRandomString(),generateRandomString(),'25.99','one_search')">Subscribe</button>
+      
+    </div>
+    <div class="cardss card2">
+      <h2 style="font-family: 'gl', sans-serif; font-size: 30px; src: url('fonts/gl.otf');">PLATINUM</h2>
+      <hr class="yellow-line">
+
+      <p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">UPTO 4 SEARCHES PER MONTH</p>
+      
+      <p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">FREE TENANT APPLICATION</p>
+      
+      <p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">FREE STANDARD PROVISON/STATE LEASE AGREEMENT AUTO FILL(COMING SOON)<p>
+      
+      <p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">FREE INPUT OF TENANT RENTAL HISTORY FROM YOU AS THE LANDLORDS</h3>
+      <h1 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 35px;color:white;">$75</h1>
+	        <button class="btn btn-primary" @click="subscribe(generateRandomString(), generateRandomString(), generateRandomString(), '75', 'four_search')">Subscribe</button>    
+</div>
+    <div class="cardss card3">
+      <h2>GOLD</h2>
+      <hr class="yellow-line">
+<p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">unlimited free rental listing<p>
+
+<p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">Free tenant application</p>
+
+<p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">Free standard provision / state lease agreement Autpo fill (coming soon)</p>
+<p style="font-family: 'Argrandir',Arial, sans-serif; font-size: 14px;color:white;">Free use of WA Tenant Bureau Logo to place on your site</p>
+<h1 style="font-family: 'Argrandir',Arial, sans-serif; font-size: 35px;color:white;">$175</h1>
+        <button @click="subscribe(generateRandomString(), generateRandomString(), generateRandomString(), '175', 'unlimitied_searches')">Subscribe</button>   
+ </div>
+  </div>
+
+
+
+</template>
+<script>
+//import axios from 'axios';
+export default {
+
+
+  methods: {
+
+ createUnlimitedSubscription() {
+      this.$axios.post('/paypal/pay', { subscriptionType: 'four_searches' })
+        .then(response => {
+          console.log('Subscription created:', response.data);
+        })
+        .catch(error => {
+          console.error('Error creating subscription:', error);
+        });
+    },
+
+
+
+	 
+      this.initiatePayment('one_search');
+    },
+    initiateFourSearchesPayment() {
+      this.initiatePayment('four_searches');
+    },
+    initiateUnlimitedSearchesPayment() {
+      this.initiatePayment('unlimited_searches');
+    },
+    initiatePayment(subscriptionType) {
+      // Replace with the actual endpoint URL for subscription initiation
+      const apiEndpoint = 'https:///createNewPayment';
+
+      // Replace with the actual success URL
+      const successUrl = 'https://your-success-url.com';
+
+      // Replace with the necessary data for the API request based on the subscription type
+      const requestData = {
+        payment_type: subscriptionType,
+        success_url: successUrl,
+        // Add other necessary data specific to each subscription type
+      };
+
+      // Make the API request using Axios
+      this.$axios.$post('/paypal/pay',requestData)
+        .then(response => {
+          // Handle the response from the server
+          console.log(response.data);
+	
+const paypalPaymentLink = response.payment_link;
+
+          // Redirect the user to the PayPal sandbox checkout page
+          window.location.href = paypalPaymentLink;
+       const newWindow = window.open(paypalPaymentLink, '_blank');
+          if (newWindow) {
+            newWindow.focus();
+          } else {
+            // Handle popup blocker or other issues
+            console.error('Unable to open new window.');
+          }
+	
+
+
+      //window.location.href = `https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=${paypalToken}`;          
+
+        })
+        .catch(error => {
+          // Handle errors
+          console.error('Error making API request:', error);
+        });
+    },
+  },
+};
+</script>
+<style>
+
+.cards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 100%;
+
+
+}
+
+.cardss {
+  width: 250px;
+  padding: 20px;
+  border: 1.5px solid yellow;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 10px;
+  height: 100%;
+  position: relative;
+  background: rgb(0, 212, 255);
+  background: rgb(0, 212, 255);
+  background: linear-gradient(180deg, rgba(0, 212, 255, 1) 0%, rgba(121, 121, 138, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  color: white;
+  font-size: 13px;
+}
+
+.card h2 {
+  font-size: 22px;
+  color: yellow;
+}
+
+.card1 {
+  position: absolute;
+  left: 30%;
+  background-color: red;
+  text-align: center;
+  z-index: "";
+  height: 55%;
+}
+
+.card2 {
+  text-align: center;
+  width: 330px;
+  padding: 30px;
+  height: 60vh;
+  z-index: 1;
+
+}
+
+.card3 {
+  position: absolute;
+  right: 15%;
+  background-color: red;
+  text-align: center;
+  z-index: 0;
+  height: 55%;
+}
+
+.yellow-line {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  border: 0;
+  border-top: 1px solid yellow;
+  width: 100%;
+}
+
+@media(max-width:767px) {
+
+
+  .cards {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+
+}
+
+</style>

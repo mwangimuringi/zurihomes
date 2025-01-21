@@ -1,0 +1,29 @@
+# dependencies
+node_modules
+
+# logs
+npm-debug.log
+
+# Nuxt build
+.nuxt
+
+# Nuxt generate
+dist
+.env
+
+# nuxt.config.js
+# nuxt.config.js
+# /nuxt.config.js
+# nuxt.config.js
+# 1nuxt.config.js
+/.fleet
+.fleet
+.DS_Store
+.DS_Store
+.DS_Store
+/ecosystem.config.js
+ecosystem.config.js
+assets/.DS_Store
+assets/.DS_Store
+assets/.DS_Store/*.
+assets/.DS_Store

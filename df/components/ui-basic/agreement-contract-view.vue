@@ -1,0 +1,160 @@
+<script>
+export default {
+    
+    name: 'ui-contract-view',
+    props : {
+        LandLordFirstName:{type: String},
+        companyDetails:{type: Object},
+    },
+    data() {
+        return{
+        
+        }
+    },
+    methods:{
+        updateApproval(approvedValue){
+            this.$emit('markApproved', approvedValue);
+        },
+    }
+}
+</script>
+
+<template>
+    <div>
+        <b-dropdown class="float-right" right toggle-class="text-muted p-0" variant="black">
+            <template v-slot:button-content>
+                <i class="mdi mdi-dots-horizontal font-18"></i>
+            </template>
+            
+            <b-dropdown-item @click="() => updateApproval('approved')">
+                <i class="mdi mdi-content-copy mr-1"></i>Mark as Approved
+            </b-dropdown-item>
+            <div class="dropdown-divider"></div>
+            
+            <a href="javascript:void(0);" class="dropdown-item text-danger">
+                <i class="mdi mdi-delete-outline mr-1"></i>Delete
+            </a>
+            
+        </b-dropdown>
+        <p class="text-primary">#{{companyDetails.company_registeration_no}}</p>
+        <h4 class="mb-1">{{companyDetails.company_name}}</h4>
+        <p class="text-muted mb-1">{{companyDetails.company_address+', '+companyDetails.city_name+', '+companyDetails.country_name}}</p>
+
+        <div class="text-muted">
+            <div class="row">
+                <div class="col-lg-4 col-sm-6">
+                    <div class="media mt-3">
+                        <div class="mr-2 align-self-center">
+                            <i class="ri-hashtag h2 m-0 text-muted"></i>
+                        </div>
+                        <div class="media-body overflow-hidden">
+                            <p class="mb-1">Contract No.</p>
+                            <h5 class="mt-0 text-truncate">#{{companyDetails.company_registeration_no}}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <div class="media mt-3">
+                        <div class="mr-2 align-self-center">
+                            <b-avatar class="font-weight-bold"  variant="secondary" :text="LandLordFirstName"></b-avatar>
+                        </div>
+                        <div class="media-body overflow-hidden">
+                            <p class="mb-1">Landlord</p>
+                            <h5 class="mt-0 text-truncate">{{companyDetails.landlord_name}}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <div class="media mt-3">
+                        <div class="mr-2 align-self-center">
+                            <i class="ri-calendar-event-line h2 m-0 text-muted"></i>
+                        </div>
+                        <div class="media-body overflow-hidden">
+                            <p class="mb-1">Reg. Date</p>
+                            <h5 class="mt-0 text-truncate">{{_app_format_datetime_AP(companyDetails.date_created)}}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <div>
+                <h5>Location:</h5>
+                <p class="text-muted">{{ companyDetails.company_address+', '+companyDetails.city_name+', '+companyDetails.country_name }}<br>
+                    {{ companyDetails.company_mail_address }}
+                </p>
+                
+            </div>
+
+            <div class="row mt-4">
+
+                <div class="col-9">
+                    <h5>Contact information</h5>
+                    <div class=" mt-1">
+                        <span class="text-muted">Phone:</span>
+                        <label class="strikethrough" >{{companyDetails.company_phone}}</label>
+                    </div>
+                    <div class=" mt-0">
+                        <span class="text-muted">Email Company:</span>
+                        <label class="strikethrough" >{{ companyDetails.company_email }}</label>
+                    </div>
+                    <div class=" mt-0">
+                        <span class="text-muted">Conctact Person:</span>
+                        <label class="strikethrough" >{{companyDetails.company_contact}}</label>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <h5>Other information</h5>
+                    <div class=" mt-1">
+                        <label class="badge  p-1" 
+                        :class="{
+                            'badge-soft-success': companyDetails.approved == 1,
+                            'badge-soft-danger': companyDetails.approved == 0,
+                            }">{{ _app_onGetApprovalText(companyDetails.approved) }}</label>
+                    </div>
+                </div>
+            </div>
+<div class="row">
+<div class="col-12">
+<h5> Company Detail </h5>
+<div class="mt-1">
+<span class="text-muted">Website: </span>
+<label class="strikethrough">{{companyDetails.company_website}}</label>
+</div>
+<div class="mt-0">
+<span class="text-muted">Whatsapp: </span>
+<label class="strikethrough">{{companyDetails.company_whatapp}}</label>
+</div>
+<div class="mt-0">
+<span class="text-muted">Fax: </span>
+<label class="strikethrough">{{companyDetails.company_fax}}</label>
+</div>
+<div class="mt-0">
+<span class="text-muted">Contact Name: </span>
+<label class="strikethrough">{{companyDetails.company_contact_name}} {{companyDetails.company_contact_lastname}}</label>
+</div>
+<div class="mt-0">
+<span class="text-muted">Contact Phone</span>
+<label class="strikethrough">{{companyDetails.company_contact_phone}}</label>
+</div>
+<div class="mt-0">
+<span class="text-muted">Cell Phone</span>
+<label class="strikethrough">{{companyDetails.company_contact_cellphone}}</label>
+</div>
+<div class="mt-0">
+<span class="text-muted">Contact Whatsapp</span>
+<label class="strikethrough">{{companyDetails.company_contact_whatapp}}</label>
+</div>
+
+
+
+
+
+
+</div>
+
+</div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,12 @@
+module.exports = {
+    apps: [
+      {
+        name: 'WATenantBureau',
+        exec_mode: 'cluster',
+        instances: 'max', // Or a number of instances
+        watch: true,
+        script: './node_modules/nuxt/bin/nuxt.js',
+        args: 'start'
+      }
+    ]
+  }
