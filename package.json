@@ -1,0 +1,30 @@
+{
+  "name": "zurihomes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon api/index.js",
+    "start": "node api/index.js",
+    "build": "npm install && npm install --prefix client && npm run build --prefix client"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "firebase": "^11.1.0",
+    "firebase-admin": "^13.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.3",
+    "react-icons": "^5.4.0",
+    "uploadthing": "^7.4.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
